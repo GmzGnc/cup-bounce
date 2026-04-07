@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Android build artifacts
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# Secrets / keystores
+*.jks
+*.keystore
+.env
+
+# Phaser local lib (büyük dosya — npm run setup ile yeniden indirilebilir)
+www/lib/phaser.min.js

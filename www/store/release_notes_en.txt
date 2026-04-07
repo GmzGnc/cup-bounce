@@ -1,0 +1,13 @@
+🎉 Version 1.0 — Initial Release
+
+Cup Bounce is live! 🚀
+
+✅ Slingshot ball-launching mechanic
+✅ Speed bonus system (×1.5 / ×2.0 multipliers)
+✅ Moving & swaying cups
+✅ Coin & Gem economy
+✅ Shop: ball packs and power boosters
+✅ Daily mission system
+✅ Build mode: 6 unlockable areas
+✅ Earn free balls by watching short ads
+✅ Personal high score tracking

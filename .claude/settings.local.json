@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(node --input-type=module)",
+      "Bash(python:*)",
+      "Bash(npx cap:*)",
+      "Bash(gradlew assembleDebug)",
+      "Bash(./gradlew assembleDebug)",
+      "Bash(npm list:*)",
+      "Bash(pip show:*)",
+      "Bash(pip install:*)",
+      "Bash(npm install:*)",
+      "Bash(npx serve:*)",
+      "Bash(curl -L \"https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js\" -o \"C:/Users/GAMZE/Desktop/CupBounce/www/lib/phaser.min.js\")",
+      "Bash(npm --version)"
+    ]
+  }
+}
