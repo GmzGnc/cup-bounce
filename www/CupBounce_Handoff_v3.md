@@ -15,6 +15,9 @@
 - Dil: Türkçe (UI) — İngilizce (store metadata)
 - Canvas boyutu: 390 × 844 px (iPhone 14 Pro viewport, FIT scale ile her ekrana uyar)
 - Ekonomi modeli: Freemium — top (can), ödüllü reklam, gem, coin
+- GitHub: https://github.com/GmzGnc/cup-bounce
+- Bilgisayar: Windows 10, kullanıcı adı `GAMZE`
+- Java (JAVA_HOME): `C:\Program Files\Android\Android Studio\jbr`
 
 ---
 
@@ -218,14 +221,18 @@ CupBounce/                          ← proje kökü
 - BootScene `preload()` — tüm localStorage anahtarları tek seferde `window.CupBounceCache`'e okunur
 - Splash süresi 2200ms → 1500ms
 
+### 4.14 GitHub'a Yükleme
+- Repo: https://github.com/GmzGnc/cup-bounce
+- Son commit hash: `7423525`
+- `.gitignore` oluşturuldu (`node_modules/`, `android/build/`, `*.keystore`, `*.jks`, `local.properties`, `android/.gradle/`)
+
 ---
 
 ## 5. SIRADAKI GÖREVLER
 
 ### Acil (APK için)
-- [ ] **GitHub'a yükle** — `git init`, `.gitignore` (node_modules, android/build, *.keystore), `git push`
-- [ ] **Keystore oluştur** (aşağıdaki Bölüm 7'ye bak)
-- [ ] **Release APK imzala** — Android Studio → Build → Generate Signed Bundle/APK
+- [x] ~~**GitHub'a yükle**~~ — TAMAMLANDI (https://github.com/GmzGnc/cup-bounce, commit: 7423525)
+- [ ] **Release APK al** — imzalı keystore ile (`gradlew.bat assembleRelease` veya Android Studio → Generate Signed APK) — **ACIL**
 - [ ] **APK cihazda test** — `adb install` ile yükle, arka plan testi yap
 
 ### Play Store
@@ -234,12 +241,12 @@ CupBounce/                          ← proje kökü
 - [ ] **Store listeleme doldur** — `www/store/` içindeki metinleri yapıştır
 - [ ] **Ekran görüntüleri** — en az 2 telefon ekranı (1080×1920 veya 1080×2340)
 - [ ] **Uygulama ikonu yükle** — 512×512 px PNG (şeffaf olmayan arka plan)
-- [ ] **Internal Test → Kapalı Beta → Açık Beta → Production**
+- [ ] **Internal Test → Closed Beta → Production**
 
 ### Teknik Borç
-- [ ] **Firebase gerçek entegrasyonu** — `firebase-app` + `firebase-auth` SDK, Google Sign-In gerçek akışı
+- [ ] **Bildirim sistemi gerçek entegrasyonu** — `@capacitor/local-notifications` gerçek izin akışı
+- [ ] **Firebase Auth gerçek entegrasyonu** — `firebase-app` + `firebase-auth` SDK, Google Sign-In gerçek akışı
 - [ ] **AdMob gerçek entegrasyonu** — `@capacitor-community/admob` paketi, gerçek reklam ID'leri
-- [ ] **Top yenileme zamanlayıcısı** — EconomyManager'a `regenAt` timestamp eklenmeli, UIScene sayaç göstermeli
 - [ ] **iOS build** — MacinCloud veya EAS Build (Mac gerekmez), `npx cap open ios` ile XCode
 - [ ] **Çökme raporlama** — Firebase Crashlytics veya Sentry
 
@@ -274,6 +281,18 @@ keytool -genkey -v -keystore cupbounce.keystore \
 
 # Python ile ikon üret (Pillow gerekli: pip install Pillow)
 python gen_icons.py
+
+# GitHub
+git add . && git commit -m "mesaj" && git push
+
+# APK yükleme — adb PATH ayarı (CMD'de)
+set PATH=%PATH%;C:\Users\GAMZE\AppData\Local\Android\Sdk\platform-tools
+adb install -r android\app\build\outputs\apk\debug\app-debug.apk
+
+# Build — CMD'de android klasöründe
+cd C:\Users\GAMZE\Desktop\CupBounce\android
+set "JAVA_HOME=C:\Program Files\Android\Android Studio\jbr"
+gradlew.bat assembleDebug
 ```
 
 ### Android Studio'da Release Build
