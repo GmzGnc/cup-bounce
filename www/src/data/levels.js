@@ -724,5 +724,469 @@ export const LEVELS = [
       { x: 255, y: 440, color: 0xcc44ff, points: 800, isGem: true, small: true,
         move: { axis: 'y', speed: 55, range: 18, phaseOffset: 0.5 } }
     ]
-  }
+  },
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 6 (51-60): Karma Formasyon — Sekme + Hareket
+  // ════════════════════════════════════════════════════════
+
+  // ── Level 51: Üçgen + hareketli tepe ────────────────────────────────────
+  { id: 51, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 450, move: { axis: 'x', speed: 45, range: 65 } },
+    { x: 120, y: 370, color: 0x00ee55, points: 250 },
+    { x: 270, y: 370, color: 0xff3333, points: 300 }
+  ]},
+
+  // ── Level 52: 4 cup çarpraz ──────────────────────────────────────────────
+  { id: 52, cups: [
+    { x: 110, y: 200, color: 0x00ee55, points: 250 },
+    { x: 280, y: 200, color: 0xff3333, points: 300 },
+    { x: 110, y: 400, color: 0xffcc00, points: 350, move: { axis: 'x', speed: 38, range: 30 } },
+    { x: 280, y: 400, color: 0x44aaff, points: 350, move: { axis: 'x', speed: 34, range: 30, phaseOffset: 1.0 } }
+  ]},
+
+  // ── Level 53: 5 cup X şekli ──────────────────────────────────────────────
+  { id: 53, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 250 },
+    { x: 290, y: 195, color: 0xff3333, points: 250 },
+    { x: 195, y: 300, color: 0xffcc00, points: 500, move: { axis: 'y', speed: 40, range: 55 } },
+    { x: 100, y: 415, color: 0x44aaff, points: 300 },
+    { x: 290, y: 415, color: 0xff6600, points: 300 }
+  ]},
+
+  // ── Level 54: 3 small hareketli ──────────────────────────────────────────
+  { id: 54, cups: [
+    { x: 140, y: 215, color: 0x00ee55, points: 350, small: true, move: { axis: 'x', speed: 36, range: 45 } },
+    { x: 250, y: 330, color: 0xff3333, points: 400, small: true, move: { axis: 'y', speed: 40, range: 50 } },
+    { x: 140, y: 415, color: 0xffcc00, points: 350, small: true, move: { axis: 'x', speed: 33, range: 40, phaseOffset: 1.2 } }
+  ]},
+
+  // ── Level 55: 6 cup iki sıra hareketli ───────────────────────────────────
+  { id: 55, cups: [
+    { x: 100, y: 205, color: 0x00ee55, points: 200, move: { axis: 'x', speed: 30, range: 22 } },
+    { x: 195, y: 205, color: 0xff3333, points: 250 },
+    { x: 290, y: 205, color: 0xffcc00, points: 300, move: { axis: 'x', speed: 28, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 390, color: 0x44aaff, points: 300 },
+    { x: 195, y: 390, color: 0xff6600, points: 400, move: { axis: 'y', speed: 35, range: 45 } },
+    { x: 290, y: 390, color: 0xcc44ff, points: 350 }
+  ]},
+
+  // ── Level 56: Yıldız formasyon ───────────────────────────────────────────
+  { id: 56, cups: [
+    { x: 195, y: 175, color: 0xffcc00, points: 500 },
+    { x: 95,  y: 270, color: 0x00ee55, points: 250, move: { axis: 'y', speed: 32, range: 45 } },
+    { x: 295, y: 270, color: 0xff3333, points: 300, move: { axis: 'y', speed: 35, range: 45, phaseOffset: 1.0 } },
+    { x: 140, y: 415, color: 0x44aaff, points: 350 },
+    { x: 250, y: 415, color: 0xff6600, points: 350 }
+  ]},
+
+  // ── Level 57: 4 small köşe + merkez gem ──────────────────────────────────
+  { id: 57, cups: [
+    { x: 100, y: 200, color: 0x00ee55, points: 300, small: true },
+    { x: 290, y: 200, color: 0xff3333, points: 300, small: true },
+    { x: 195, y: 305, color: 0xcc44ff, points: 700, isGem: true },
+    { x: 100, y: 420, color: 0x44aaff, points: 300, small: true },
+    { x: 290, y: 420, color: 0xffcc00, points: 300, small: true }
+  ]},
+
+  // ── Level 58: Hızlı 3 hareketli ─────────────────────────────────────────
+  { id: 58, cups: [
+    { x: 195, y: 195, color: 0xff6600, points: 450, move: { axis: 'x', speed: 55, range: 70 } },
+    { x: 120, y: 320, color: 0x00ee55, points: 300, move: { axis: 'y', speed: 48, range: 55 } },
+    { x: 270, y: 410, color: 0xff3333, points: 400, move: { axis: 'x', speed: 50, range: 55 } }
+  ]},
+
+  // ── Level 59: 5 small zikzak ─────────────────────────────────────────────
+  { id: 59, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 300, small: true, move: { axis: 'x', speed: 38, range: 22 } },
+    { x: 290, y: 255, color: 0xff3333, points: 350, small: true, move: { axis: 'y', speed: 42, range: 45 } },
+    { x: 100, y: 320, color: 0xffcc00, points: 400, small: true, move: { axis: 'x', speed: 35, range: 22, phaseOffset: 0.6 } },
+    { x: 290, y: 385, color: 0x44aaff, points: 350, small: true, move: { axis: 'y', speed: 38, range: 40, phaseOffset: 1.0 } },
+    { x: 195, y: 435, color: 0xff6600, points: 300, small: true }
+  ]},
+
+  // ── Level 60: BOSS — 7 cup, 2 gem, karma hareket ─────────────────────────
+  { id: 60, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 500, move: { axis: 'x', speed: 58, range: 65 } },
+    { x: 100, y: 255, color: 0x00ee55, points: 350, move: { axis: 'y', speed: 50, range: 50 } },
+    { x: 290, y: 255, color: 0xff3333, points: 400, move: { axis: 'y', speed: 53, range: 50, phaseOffset: 1.1 } },
+    { x: 100, y: 375, color: 0xffcc00, points: 400, small: true, move: { axis: 'x', speed: 46, range: 22 } },
+    { x: 290, y: 375, color: 0x44aaff, points: 400, small: true, move: { axis: 'x', speed: 43, range: 22, phaseOffset: 0.9 } },
+    { x: 145, y: 440, color: 0xcc44ff, points: 800, isGem: true, small: true, move: { axis: 'x', speed: 48, range: 40 } },
+    { x: 250, y: 440, color: 0xcc44ff, points: 800, isGem: true, small: true, move: { axis: 'y', speed: 44, range: 18, phaseOffset: 0.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 7 (61-70): Özel Kurallar — Combo & Seri
+  // ════════════════════════════════════════════════════════
+
+  // ── Level 61: Tek büyük puan ─────────────────────────────────────────────
+  { id: 61, cups: [
+    { x: 195, y: 300, color: 0xffcc00, points: 800 }
+  ]},
+
+  // ── Level 62: 2 small hızlı ──────────────────────────────────────────────
+  { id: 62, cups: [
+    { x: 130, y: 250, color: 0x00ee55, points: 350, small: true, move: { axis: 'x', speed: 55, range: 40 } },
+    { x: 260, y: 370, color: 0xff3333, points: 450, small: true, move: { axis: 'y', speed: 58, range: 55 } }
+  ]},
+
+  // ── Level 63: 4 cup simetrik ─────────────────────────────────────────────
+  { id: 63, cups: [
+    { x: 120, y: 215, color: 0x00ee55, points: 300, move: { axis: 'y', speed: 40, range: 45 } },
+    { x: 270, y: 215, color: 0xff3333, points: 350, move: { axis: 'y', speed: 43, range: 45, phaseOffset: 1.0 } },
+    { x: 120, y: 395, color: 0xffcc00, points: 400, move: { axis: 'y', speed: 38, range: 45, phaseOffset: 0.5 } },
+    { x: 270, y: 395, color: 0x44aaff, points: 400, move: { axis: 'y', speed: 45, range: 45, phaseOffset: 1.5 } }
+  ]},
+
+  // ── Level 64: 3 cup üst küme ─────────────────────────────────────────────
+  { id: 64, cups: [
+    { x: 130, y: 195, color: 0x00ee55, points: 300 },
+    { x: 195, y: 195, color: 0xffcc00, points: 500 },
+    { x: 260, y: 195, color: 0xff3333, points: 350 },
+    { x: 195, y: 415, color: 0xff6600, points: 450, move: { axis: 'x', speed: 50, range: 65 } }
+  ]},
+
+  // ── Level 65: 5 cup çember ───────────────────────────────────────────────
+  { id: 65, cups: [
+    { x: 195, y: 180, color: 0xffcc00, points: 400 },
+    { x: 310, y: 295, color: 0xff3333, points: 350 },
+    { x: 270, y: 420, color: 0xff6600, points: 300 },
+    { x: 120, y: 420, color: 0x44aaff, points: 300 },
+    { x:  80, y: 295, color: 0x00ee55, points: 350 }
+  ]},
+
+  // ── Level 66: Çember hareketli ───────────────────────────────────────────
+  { id: 66, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 450, move: { axis: 'x', speed: 45, range: 60 } },
+    { x: 100, y: 300, color: 0x00ee55, points: 350, move: { axis: 'y', speed: 40, range: 50 } },
+    { x: 290, y: 300, color: 0xff3333, points: 400, move: { axis: 'y', speed: 43, range: 50, phaseOffset: 1.2 } },
+    { x: 195, y: 420, color: 0x44aaff, points: 350, move: { axis: 'x', speed: 42, range: 60, phaseOffset: 0.8 } }
+  ]},
+
+  // ── Level 67: 6 small sabit ──────────────────────────────────────────────
+  { id: 67, cups: [
+    { x: 100, y: 200, color: 0x00ee55, points: 300, small: true },
+    { x: 195, y: 200, color: 0xff3333, points: 350, small: true },
+    { x: 290, y: 200, color: 0xffcc00, points: 400, small: true },
+    { x: 100, y: 395, color: 0x44aaff, points: 350, small: true },
+    { x: 195, y: 395, color: 0xff6600, points: 400, small: true },
+    { x: 290, y: 395, color: 0xcc44ff, points: 500, isGem: true, small: true }
+  ]},
+
+  // ── Level 68: Üç hızlı small ─────────────────────────────────────────────
+  { id: 68, cups: [
+    { x: 195, y: 190, color: 0xff6600, points: 500, small: true, move: { axis: 'x', speed: 62, range: 68 } },
+    { x: 115, y: 340, color: 0x00ee55, points: 380, small: true, move: { axis: 'y', speed: 55, range: 55 } },
+    { x: 275, y: 420, color: 0xff3333, points: 420, small: true, move: { axis: 'x', speed: 58, range: 52 } }
+  ]},
+
+  // ── Level 69: 5 hareketli farklı hız ────────────────────────────────────
+  { id: 69, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 450, move: { axis: 'x', speed: 65, range: 65 } },
+    { x: 100, y: 270, color: 0x00ee55, points: 300, move: { axis: 'y', speed: 42, range: 45 } },
+    { x: 290, y: 270, color: 0xff3333, points: 350, move: { axis: 'y', speed: 38, range: 45, phaseOffset: 0.7 } },
+    { x: 130, y: 410, color: 0xffcc00, points: 400, move: { axis: 'x', speed: 52, range: 40 } },
+    { x: 260, y: 410, color: 0x44aaff, points: 400, move: { axis: 'x', speed: 48, range: 40, phaseOffset: 1.3 } }
+  ]},
+
+  // ── Level 70: BOSS — 8 cup, 2 gem, max formasyon ─────────────────────────
+  { id: 70, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 600, move: { axis: 'x', speed: 68, range: 65 } },
+    { x: 100, y: 245, color: 0x00ee55, points: 400, move: { axis: 'y', speed: 55, range: 48 } },
+    { x: 290, y: 245, color: 0xff3333, points: 450, move: { axis: 'y', speed: 60, range: 48, phaseOffset: 1.0 } },
+    { x: 100, y: 345, color: 0xffcc00, points: 400, small: true, move: { axis: 'x', speed: 50, range: 22 } },
+    { x: 290, y: 345, color: 0x44aaff, points: 400, small: true, move: { axis: 'x', speed: 47, range: 22, phaseOffset: 0.8 } },
+    { x: 150, y: 415, color: 0xff88ff, points: 500, small: true, move: { axis: 'y', speed: 53, range: 18 } },
+    { x: 240, y: 440, color: 0xcc44ff, points: 900, isGem: true, small: true, move: { axis: 'x', speed: 60, range: 45 } },
+    { x: 195, y: 440, color: 0xcc44ff, points: 900, isGem: true, small: true, move: { axis: 'y', speed: 50, range: 18, phaseOffset: 1.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 8 (71-80): İleri Challenge — Hassasiyet
+  // ════════════════════════════════════════════════════════
+
+  // ── Level 71: Tek small hızlı ────────────────────────────────────────────
+  { id: 71, cups: [
+    { x: 195, y: 300, color: 0xff6600, points: 600, small: true, move: { axis: 'x', speed: 70, range: 95 } }
+  ]},
+
+  // ── Level 72: 2 small zıt yön ────────────────────────────────────────────
+  { id: 72, cups: [
+    { x: 195, y: 220, color: 0x00ee55, points: 450, small: true, move: { axis: 'x', speed: 65, range: 80 } },
+    { x: 195, y: 390, color: 0xff3333, points: 500, small: true, move: { axis: 'x', speed: 68, range: 80, phaseOffset: Math.PI } }
+  ]},
+
+  // ── Level 73: 3 small üçgen ──────────────────────────────────────────────
+  { id: 73, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 550, small: true, move: { axis: 'x', speed: 60, range: 65 } },
+    { x: 115, y: 385, color: 0x00ee55, points: 420, small: true, move: { axis: 'y', speed: 55, range: 50 } },
+    { x: 275, y: 385, color: 0xff3333, points: 480, small: true, move: { axis: 'y', speed: 58, range: 50, phaseOffset: 1.0 } }
+  ]},
+
+  // ── Level 74: 4 small karma ───────────────────────────────────────────────
+  { id: 74, cups: [
+    { x: 120, y: 205, color: 0x00ee55, points: 400, small: true, move: { axis: 'x', speed: 55, range: 32 } },
+    { x: 270, y: 205, color: 0xff3333, points: 450, small: true, move: { axis: 'x', speed: 58, range: 28, phaseOffset: 0.8 } },
+    { x: 120, y: 415, color: 0xffcc00, points: 430, small: true, move: { axis: 'y', speed: 52, range: 48 } },
+    { x: 270, y: 415, color: 0x44aaff, points: 480, small: true, move: { axis: 'y', speed: 56, range: 48, phaseOffset: 1.2 } }
+  ]},
+
+  // ── Level 75: 5 sabit farklı boyut ───────────────────────────────────────
+  { id: 75, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 600 },
+    { x: 100, y: 295, color: 0x00ee55, points: 350, small: true },
+    { x: 290, y: 295, color: 0xff3333, points: 400, small: true },
+    { x: 140, y: 420, color: 0xffcc00, points: 450, small: true },
+    { x: 250, y: 420, color: 0x44aaff, points: 450, small: true }
+  ]},
+
+  // ── Level 76: 6 hareketli yoğun ──────────────────────────────────────────
+  { id: 76, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 350, move: { axis: 'x', speed: 48, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 400, move: { axis: 'y', speed: 52, range: 45 } },
+    { x: 290, y: 195, color: 0xffcc00, points: 450, move: { axis: 'x', speed: 45, range: 22, phaseOffset: 1.0 } },
+    { x: 100, y: 415, color: 0x44aaff, points: 400, move: { axis: 'x', speed: 50, range: 22, phaseOffset: 0.5 } },
+    { x: 195, y: 415, color: 0xff6600, points: 500, move: { axis: 'y', speed: 55, range: 45, phaseOffset: 1.2 } },
+    { x: 290, y: 415, color: 0xcc44ff, points: 450, move: { axis: 'x', speed: 47, range: 22, phaseOffset: 1.8 } }
+  ]},
+
+  // ── Level 77: 3 gem sabit ────────────────────────────────────────────────
+  { id: 77, cups: [
+    { x: 120, y: 250, color: 0xcc44ff, points: 900, isGem: true },
+    { x: 270, y: 250, color: 0xcc44ff, points: 900, isGem: true },
+    { x: 195, y: 415, color: 0xcc44ff, points: 900, isGem: true }
+  ]},
+
+  // ── Level 78: 5 small tüm hareketli ──────────────────────────────────────
+  { id: 78, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 550, small: true, move: { axis: 'x', speed: 62, range: 65 } },
+    { x: 100, y: 290, color: 0x00ee55, points: 420, small: true, move: { axis: 'y', speed: 55, range: 48 } },
+    { x: 290, y: 290, color: 0xff3333, points: 470, small: true, move: { axis: 'y', speed: 58, range: 48, phaseOffset: 1.0 } },
+    { x: 130, y: 415, color: 0xffcc00, points: 440, small: true, move: { axis: 'x', speed: 52, range: 38 } },
+    { x: 260, y: 415, color: 0x44aaff, points: 440, small: true, move: { axis: 'x', speed: 56, range: 38, phaseOffset: 1.4 } }
+  ]},
+
+  // ── Level 79: 4 cup yüksek hız ───────────────────────────────────────────
+  { id: 79, cups: [
+    { x: 195, y: 190, color: 0xff6600, points: 600, move: { axis: 'x', speed: 72, range: 70 } },
+    { x: 100, y: 310, color: 0x00ee55, points: 450, small: true, move: { axis: 'y', speed: 65, range: 52 } },
+    { x: 290, y: 310, color: 0xff3333, points: 500, small: true, move: { axis: 'y', speed: 68, range: 52, phaseOffset: 0.9 } },
+    { x: 195, y: 430, color: 0xcc44ff, points: 1000, isGem: true, small: true, move: { axis: 'x', speed: 60, range: 55 } }
+  ]},
+
+  // ── Level 80: MEGA BOSS — 8 cup, 3 gem, ultra hız ────────────────────────
+  { id: 80, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 700, move: { axis: 'x', speed: 75, range: 65 } },
+    { x: 100, y: 245, color: 0x00ee55, points: 500, small: true, move: { axis: 'y', speed: 65, range: 48 } },
+    { x: 290, y: 245, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 70, range: 48, phaseOffset: 1.0 } },
+    { x: 100, y: 340, color: 0xffcc00, points: 500, small: true, move: { axis: 'x', speed: 60, range: 22 } },
+    { x: 290, y: 340, color: 0x44aaff, points: 500, small: true, move: { axis: 'x', speed: 63, range: 22, phaseOffset: 0.8 } },
+    { x: 145, y: 420, color: 0xcc44ff, points: 1000, isGem: true, small: true, move: { axis: 'x', speed: 68, range: 42 } },
+    { x: 245, y: 420, color: 0xcc44ff, points: 1000, isGem: true, small: true, move: { axis: 'x', speed: 64, range: 38, phaseOffset: 1.3 } },
+    { x: 195, y: 445, color: 0xcc44ff, points: 1000, isGem: true, small: true, move: { axis: 'y', speed: 58, range: 16, phaseOffset: 0.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 9 (81-90): Seri Atış — Çok Hedef
+  // ════════════════════════════════════════════════════════
+
+  // ── Level 81: 7 sabit grid ───────────────────────────────────────────────
+  { id: 81, cups: [
+    { x: 100, y: 200, color: 0x00ee55, points: 250 },
+    { x: 195, y: 200, color: 0xff3333, points: 300 },
+    { x: 290, y: 200, color: 0xffcc00, points: 350 },
+    { x: 100, y: 310, color: 0x44aaff, points: 300 },
+    { x: 290, y: 310, color: 0xff6600, points: 350 },
+    { x: 100, y: 420, color: 0xff88ff, points: 350 },
+    { x: 290, y: 420, color: 0xcc44ff, points: 450, isGem: true }
+  ]},
+
+  // ── Level 82: 4 small + 2 normal ─────────────────────────────────────────
+  { id: 82, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 500 },
+    { x: 110, y: 285, color: 0x00ee55, points: 350, small: true, move: { axis: 'x', speed: 45, range: 28 } },
+    { x: 280, y: 285, color: 0xff3333, points: 400, small: true, move: { axis: 'x', speed: 42, range: 28, phaseOffset: 1.0 } },
+    { x: 110, y: 390, color: 0xffcc00, points: 380, small: true },
+    { x: 280, y: 390, color: 0x44aaff, points: 380, small: true },
+    { x: 195, y: 430, color: 0xcc44ff, points: 850, isGem: true }
+  ]},
+
+  // ── Level 83: 5 hareketli spiral ─────────────────────────────────────────
+  { id: 83, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 500, move: { axis: 'x', speed: 55, range: 65 } },
+    { x: 105, y: 260, color: 0x00ee55, points: 380, move: { axis: 'y', speed: 48, range: 42 } },
+    { x: 285, y: 330, color: 0xff3333, points: 420, move: { axis: 'y', speed: 52, range: 42, phaseOffset: 0.8 } },
+    { x: 130, y: 400, color: 0xffcc00, points: 450, move: { axis: 'x', speed: 50, range: 38 } },
+    { x: 270, y: 435, color: 0x44aaff, points: 430, move: { axis: 'x', speed: 47, range: 35, phaseOffset: 1.2 } }
+  ]},
+
+  // ── Level 84: 8 sabit yoğun ──────────────────────────────────────────────
+  { id: 84, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 250, small: true },
+    { x: 195, y: 195, color: 0xff3333, points: 300, small: true },
+    { x: 290, y: 195, color: 0xffcc00, points: 350, small: true },
+    { x: 100, y: 300, color: 0x44aaff, points: 300, small: true },
+    { x: 290, y: 300, color: 0xff6600, points: 350, small: true },
+    { x: 100, y: 415, color: 0xff88ff, points: 350, small: true },
+    { x: 195, y: 415, color: 0xcc44ff, points: 850, isGem: true, small: true },
+    { x: 290, y: 415, color: 0xff88ff, points: 350, small: true }
+  ]},
+
+  // ── Level 85: 3 hızlı büyük puan ─────────────────────────────────────────
+  { id: 85, cups: [
+    { x: 195, y: 200, color: 0xffcc00, points: 700, move: { axis: 'x', speed: 70, range: 70 } },
+    { x: 120, y: 370, color: 0xff6600, points: 600, move: { axis: 'y', speed: 63, range: 55 } },
+    { x: 270, y: 370, color: 0xff3333, points: 650, move: { axis: 'x', speed: 67, range: 55 } }
+  ]},
+
+  // ── Level 86: 6 cup karma boyut ──────────────────────────────────────────
+  { id: 86, cups: [
+    { x: 100, y: 200, color: 0x00ee55, points: 300 },
+    { x: 290, y: 200, color: 0xff3333, points: 350 },
+    { x: 150, y: 305, color: 0xffcc00, points: 450, small: true, move: { axis: 'x', speed: 50, range: 38 } },
+    { x: 240, y: 305, color: 0x44aaff, points: 450, small: true, move: { axis: 'x', speed: 47, range: 38, phaseOffset: 1.0 } },
+    { x: 100, y: 415, color: 0xff6600, points: 400, small: true },
+    { x: 290, y: 415, color: 0xcc44ff, points: 900, isGem: true, small: true }
+  ]},
+
+  // ── Level 87: 4 diagonal hareketli ───────────────────────────────────────
+  { id: 87, cups: [
+    { x: 120, y: 205, color: 0x00ee55, points: 400, move: { axis: 'y', speed: 55, range: 50 } },
+    { x: 270, y: 205, color: 0xff3333, points: 450, move: { axis: 'y', speed: 58, range: 50, phaseOffset: Math.PI } },
+    { x: 120, y: 415, color: 0xffcc00, points: 430, move: { axis: 'x', speed: 52, range: 30 } },
+    { x: 270, y: 415, color: 0x44aaff, points: 430, move: { axis: 'x', speed: 55, range: 30, phaseOffset: Math.PI } }
+  ]},
+
+  // ── Level 88: 7 small karma ───────────────────────────────────────────────
+  { id: 88, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 350, small: true, move: { axis: 'x', speed: 48, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 400, small: true },
+    { x: 290, y: 195, color: 0xffcc00, points: 420, small: true, move: { axis: 'x', speed: 45, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 310, color: 0x44aaff, points: 380, small: true },
+    { x: 290, y: 310, color: 0xff6600, points: 400, small: true },
+    { x: 145, y: 425, color: 0xff88ff, points: 430, small: true, move: { axis: 'y', speed: 50, range: 18 } },
+    { x: 250, y: 425, color: 0xcc44ff, points: 950, isGem: true, small: true }
+  ]},
+
+  // ── Level 89: 5 cup zigzag hızlı ─────────────────────────────────────────
+  { id: 89, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 400, small: true, move: { axis: 'x', speed: 58, range: 22 } },
+    { x: 290, y: 255, color: 0xff3333, points: 450, small: true, move: { axis: 'y', speed: 62, range: 48 } },
+    { x: 100, y: 315, color: 0xffcc00, points: 480, small: true, move: { axis: 'x', speed: 55, range: 22, phaseOffset: 0.6 } },
+    { x: 290, y: 380, color: 0x44aaff, points: 450, small: true, move: { axis: 'y', speed: 60, range: 45, phaseOffset: 1.0 } },
+    { x: 195, y: 435, color: 0xcc44ff, points: 1000, isGem: true, small: true }
+  ]},
+
+  // ── Level 90: MEGA BOSS — 9 cup, 3 gem ───────────────────────────────────
+  { id: 90, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 700, move: { axis: 'x', speed: 78, range: 65 } },
+    { x: 100, y: 240, color: 0x00ee55, points: 500, small: true, move: { axis: 'y', speed: 68, range: 48 } },
+    { x: 290, y: 240, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 72, range: 48, phaseOffset: 1.0 } },
+    { x: 100, y: 320, color: 0xffcc00, points: 500, small: true, move: { axis: 'x', speed: 63, range: 22 } },
+    { x: 290, y: 320, color: 0x44aaff, points: 500, small: true, move: { axis: 'x', speed: 66, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 415, color: 0xff88ff, points: 480, small: true, move: { axis: 'y', speed: 60, range: 42 } },
+    { x: 290, y: 415, color: 0xff88ff, points: 480, small: true, move: { axis: 'y', speed: 58, range: 42, phaseOffset: 1.5 } },
+    { x: 145, y: 445, color: 0xcc44ff, points: 1100, isGem: true, small: true, move: { axis: 'x', speed: 70, range: 38 } },
+    { x: 250, y: 445, color: 0xcc44ff, points: 1100, isGem: true, small: true, move: { axis: 'x', speed: 65, range: 35, phaseOffset: 1.2 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 10 (91-100): MASTER — En Yüksek Zorluk
+  // ════════════════════════════════════════════════════════
+
+  // ── Level 91: Tek small ultra hızlı ──────────────────────────────────────
+  { id: 91, cups: [
+    { x: 195, y: 305, color: 0xff6600, points: 800, small: true, move: { axis: 'x', speed: 88, range: 100 } }
+  ]},
+
+  // ── Level 92: 2 small zıt ultra ──────────────────────────────────────────
+  { id: 92, cups: [
+    { x: 195, y: 215, color: 0x00ee55, points: 600, small: true, move: { axis: 'x', speed: 82, range: 88 } },
+    { x: 195, y: 395, color: 0xff3333, points: 650, small: true, move: { axis: 'x', speed: 85, range: 88, phaseOffset: Math.PI } }
+  ]},
+
+  // ── Level 93: 3 small ultra ───────────────────────────────────────────────
+  { id: 93, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 700, small: true, move: { axis: 'x', speed: 75, range: 68 } },
+    { x: 108, y: 385, color: 0x00ee55, points: 550, small: true, move: { axis: 'y', speed: 70, range: 55 } },
+    { x: 282, y: 385, color: 0xff3333, points: 600, small: true, move: { axis: 'y', speed: 73, range: 55, phaseOffset: 1.0 } }
+  ]},
+
+  // ── Level 94: 4 small çapraz ultra ────────────────────────────────────────
+  { id: 94, cups: [
+    { x: 115, y: 205, color: 0x00ee55, points: 550, small: true, move: { axis: 'x', speed: 68, range: 28 } },
+    { x: 275, y: 205, color: 0xff3333, points: 600, small: true, move: { axis: 'x', speed: 72, range: 26, phaseOffset: 0.8 } },
+    { x: 115, y: 415, color: 0xffcc00, points: 580, small: true, move: { axis: 'y', speed: 65, range: 50 } },
+    { x: 275, y: 415, color: 0x44aaff, points: 580, small: true, move: { axis: 'y', speed: 68, range: 50, phaseOffset: 1.2 } }
+  ]},
+
+  // ── Level 95: 5 hep small, yüksek hız ────────────────────────────────────
+  { id: 95, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 700, small: true, move: { axis: 'x', speed: 80, range: 68 } },
+    { x: 100, y: 280, color: 0x00ee55, points: 550, small: true, move: { axis: 'y', speed: 72, range: 50 } },
+    { x: 290, y: 280, color: 0xff3333, points: 600, small: true, move: { axis: 'y', speed: 75, range: 50, phaseOffset: 1.0 } },
+    { x: 130, y: 415, color: 0xffcc00, points: 580, small: true, move: { axis: 'x', speed: 68, range: 38 } },
+    { x: 260, y: 415, color: 0x44aaff, points: 580, small: true, move: { axis: 'x', speed: 70, range: 35, phaseOffset: 1.3 } }
+  ]},
+
+  // ── Level 96: 6 cup, 2 gem, tüm hareketli ────────────────────────────────
+  { id: 96, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 700, move: { axis: 'x', speed: 78, range: 68 } },
+    { x: 100, y: 270, color: 0x00ee55, points: 500, small: true, move: { axis: 'y', speed: 68, range: 48 } },
+    { x: 290, y: 270, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 72, range: 48, phaseOffset: 0.9 } },
+    { x: 130, y: 385, color: 0xffcc00, points: 520, small: true, move: { axis: 'x', speed: 65, range: 38 } },
+    { x: 165, y: 445, color: 0xcc44ff, points: 1200, isGem: true, small: true, move: { axis: 'x', speed: 74, range: 48 } },
+    { x: 240, y: 445, color: 0xcc44ff, points: 1200, isGem: true, small: true, move: { axis: 'y', speed: 62, range: 18, phaseOffset: 0.5 } }
+  ]},
+
+  // ── Level 97: 7 small tüm hareketli ──────────────────────────────────────
+  { id: 97, cups: [
+    { x: 195, y: 180, color: 0xff6600, points: 700, small: true, move: { axis: 'x', speed: 82, range: 65 } },
+    { x: 100, y: 245, color: 0x00ee55, points: 520, small: true, move: { axis: 'y', speed: 72, range: 46 } },
+    { x: 290, y: 245, color: 0xff3333, points: 570, small: true, move: { axis: 'y', speed: 76, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 330, color: 0xffcc00, points: 520, small: true, move: { axis: 'x', speed: 67, range: 22 } },
+    { x: 290, y: 330, color: 0x44aaff, points: 520, small: true, move: { axis: 'x', speed: 70, range: 22, phaseOffset: 0.7 } },
+    { x: 145, y: 420, color: 0xff88ff, points: 550, small: true, move: { axis: 'y', speed: 64, range: 18 } },
+    { x: 250, y: 420, color: 0xcc44ff, points: 1300, isGem: true, small: true, move: { axis: 'x', speed: 78, range: 42 } }
+  ]},
+
+  // ── Level 98: 8 small ultra yoğun ────────────────────────────────────────
+  { id: 98, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 500, small: true, move: { axis: 'x', speed: 65, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 70, range: 48 } },
+    { x: 290, y: 195, color: 0xffcc00, points: 520, small: true, move: { axis: 'x', speed: 63, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 310, color: 0x44aaff, points: 520, small: true, move: { axis: 'y', speed: 68, range: 45, phaseOffset: 0.6 } },
+    { x: 290, y: 310, color: 0xff6600, points: 560, small: true, move: { axis: 'y', speed: 72, range: 45, phaseOffset: 1.3 } },
+    { x: 100, y: 430, color: 0xff88ff, points: 520, small: true, move: { axis: 'x', speed: 67, range: 22, phaseOffset: 1.0 } },
+    { x: 250, y: 430, color: 0xcc44ff, points: 1300, isGem: true, small: true, move: { axis: 'x', speed: 76, range: 38 } },
+    { x: 195, y: 445, color: 0xff88ff, points: 540, small: true, move: { axis: 'y', speed: 62, range: 16, phaseOffset: 1.7 } }
+  ]},
+
+  // ── Level 99: 9 cup kaos ─────────────────────────────────────────────────
+  { id: 99, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 750, small: true, move: { axis: 'x', speed: 85, range: 65 } },
+    { x: 100, y: 240, color: 0x00ee55, points: 550, small: true, move: { axis: 'y', speed: 75, range: 46 } },
+    { x: 290, y: 240, color: 0xff3333, points: 600, small: true, move: { axis: 'y', speed: 78, range: 46, phaseOffset: 1.1 } },
+    { x: 100, y: 318, color: 0xffcc00, points: 550, small: true, move: { axis: 'x', speed: 70, range: 22 } },
+    { x: 290, y: 318, color: 0x44aaff, points: 550, small: true, move: { axis: 'x', speed: 73, range: 22, phaseOffset: 0.7 } },
+    { x: 100, y: 405, color: 0xff88ff, points: 530, small: true, move: { axis: 'y', speed: 67, range: 40 } },
+    { x: 290, y: 405, color: 0xff88ff, points: 530, small: true, move: { axis: 'y', speed: 65, range: 40, phaseOffset: 1.4 } },
+    { x: 148, y: 445, color: 0xcc44ff, points: 1400, isGem: true, small: true, move: { axis: 'x', speed: 80, range: 38 } },
+    { x: 248, y: 445, color: 0xcc44ff, points: 1400, isGem: true, small: true, move: { axis: 'y', speed: 68, range: 16, phaseOffset: 0.5 } }
+  ]},
+
+  // ── Level 100: ULTIMATE BOSS — 10 cup, 3 gem, max kaos ───────────────────
+  { id: 100, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 800, move: { axis: 'x', speed: 90, range: 68 } },
+    { x: 100, y: 238, color: 0x00ee55, points: 600, small: true, move: { axis: 'y', speed: 78, range: 46 } },
+    { x: 290, y: 238, color: 0xff3333, points: 650, small: true, move: { axis: 'y', speed: 82, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 308, color: 0xffcc00, points: 600, small: true, move: { axis: 'x', speed: 73, range: 22 } },
+    { x: 290, y: 308, color: 0x44aaff, points: 600, small: true, move: { axis: 'x', speed: 76, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 385, color: 0xff88ff, points: 580, small: true, move: { axis: 'y', speed: 70, range: 40 } },
+    { x: 290, y: 385, color: 0xff88ff, points: 580, small: true, move: { axis: 'y', speed: 68, range: 40, phaseOffset: 1.5 } },
+    { x: 145, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 84, range: 38 } },
+    { x: 245, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 80, range: 35, phaseOffset: 1.2 } },
+    { x: 195, y: 448, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'y', speed: 72, range: 14, phaseOffset: 0.5 } }
+  ]}
 ];
