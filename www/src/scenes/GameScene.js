@@ -470,6 +470,12 @@ export class GameScene extends Phaser.Scene {
     // ── Coin bonus for completing level ───────────────────────────────────────
     this.economy.addCoins(50);
 
+    // ── Gem + ball rewards (every 10 levels) ──────────────────────────────────
+    const sectionReward = this.economy.onLevelComplete(this.levelMgr.getLevel());
+    if (sectionReward.gems  > 0) this.levelGems = (this.levelGems || 0) + sectionReward.gems;
+    if (sectionReward.balls > 0) this.registry.set('balls', this.economy.getBalls());
+    this.registry.set('gems', this.economy.getGems());
+
     // ── Level-scoped boosters expire at level end ─────────────────────────────
     this.boosters.consumeAll('x2Score');
     this.boosters.consumeAll('slowMotion');
