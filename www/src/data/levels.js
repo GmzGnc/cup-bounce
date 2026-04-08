@@ -1189,4 +1189,401 @@ export const LEVELS = [
     { x: 245, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 80, range: 35, phaseOffset: 1.2 } },
     { x: 195, y: 448, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'y', speed: 72, range: 14, phaseOffset: 0.5 } }
   ]}
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 11 (101-110): Nefes Al — Orta Zorluk Yeniden Başlangıç
+  // ════════════════════════════════════════════════════════
+
+  { id: 101, cups: [
+    { x: 195, y: 280, color: 0x00ee55, points: 300 },
+    { x: 120, y: 380, color: 0xff3333, points: 400 }
+  ]},
+  { id: 102, cups: [
+    { x: 150, y: 240, color: 0x00ee55, points: 350 },
+    { x: 240, y: 240, color: 0xff3333, points: 400 },
+    { x: 195, y: 400, color: 0xffcc00, points: 500 }
+  ]},
+  { id: 103, cups: [
+    { x: 100, y: 210, color: 0x00ee55, points: 300 },
+    { x: 290, y: 210, color: 0xff3333, points: 350 },
+    { x: 195, y: 320, color: 0xffcc00, points: 500, move: { axis: 'x', speed: 42, range: 65 } },
+    { x: 195, y: 420, color: 0x44aaff, points: 400 }
+  ]},
+  { id: 104, cups: [
+    { x: 130, y: 200, color: 0x00ee55, points: 350, move: { axis: 'y', speed: 38, range: 48 } },
+    { x: 260, y: 200, color: 0xff3333, points: 400, move: { axis: 'y', speed: 42, range: 48, phaseOffset: 1.0 } },
+    { x: 195, y: 410, color: 0xffcc00, points: 550 }
+  ]},
+  { id: 105, cups: [
+    { x: 100, y: 200, color: 0x00ee55, points: 300 },
+    { x: 195, y: 200, color: 0xffcc00, points: 500 },
+    { x: 290, y: 200, color: 0xff3333, points: 350 },
+    { x: 140, y: 390, color: 0x44aaff, points: 400, move: { axis: 'x', speed: 40, range: 38 } },
+    { x: 260, y: 390, color: 0xff6600, points: 450, move: { axis: 'x', speed: 37, range: 35, phaseOffset: 1.0 } }
+  ]},
+  { id: 106, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 600, move: { axis: 'x', speed: 50, range: 68 } },
+    { x: 100, y: 310, color: 0x00ee55, points: 380 },
+    { x: 290, y: 310, color: 0xff3333, points: 420 },
+    { x: 195, y: 425, color: 0xcc44ff, points: 800, isGem: true }
+  ]},
+  { id: 107, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 350, small: true },
+    { x: 290, y: 195, color: 0xff3333, points: 400, small: true },
+    { x: 150, y: 310, color: 0xffcc00, points: 450, small: true, move: { axis: 'x', speed: 44, range: 38 } },
+    { x: 240, y: 420, color: 0x44aaff, points: 500, small: true }
+  ]},
+  { id: 108, cups: [
+    { x: 195, y: 190, color: 0xff6600, points: 550, move: { axis: 'x', speed: 55, range: 70 } },
+    { x: 110, y: 295, color: 0x00ee55, points: 400, move: { axis: 'y', speed: 48, range: 50 } },
+    { x: 280, y: 295, color: 0xff3333, points: 450, move: { axis: 'y', speed: 52, range: 50, phaseOffset: 1.1 } },
+    { x: 110, y: 415, color: 0xffcc00, points: 420, small: true },
+    { x: 280, y: 415, color: 0x44aaff, points: 420, small: true }
+  ]},
+  { id: 109, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 600, small: true, move: { axis: 'x', speed: 60, range: 68 } },
+    { x: 100, y: 290, color: 0x00ee55, points: 450, small: true, move: { axis: 'y', speed: 52, range: 50 } },
+    { x: 290, y: 290, color: 0xff3333, points: 500, small: true, move: { axis: 'y', speed: 56, range: 50, phaseOffset: 1.0 } },
+    { x: 140, y: 420, color: 0xff6600, points: 480, small: true, move: { axis: 'x', speed: 50, range: 38 } },
+    { x: 260, y: 420, color: 0xcc44ff, points: 900, isGem: true, small: true }
+  ]},
+  { id: 110, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 700, move: { axis: 'x', speed: 68, range: 65 } },
+    { x: 100, y: 250, color: 0x00ee55, points: 500, small: true, move: { axis: 'y', speed: 60, range: 48 } },
+    { x: 290, y: 250, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 64, range: 48, phaseOffset: 1.0 } },
+    { x: 130, y: 360, color: 0xffcc00, points: 520, small: true, move: { axis: 'x', speed: 56, range: 38 } },
+    { x: 260, y: 360, color: 0x44aaff, points: 520, small: true, move: { axis: 'x', speed: 52, range: 35, phaseOffset: 0.8 } },
+    { x: 155, y: 440, color: 0xcc44ff, points: 1000, isGem: true, small: true, move: { axis: 'x', speed: 62, range: 44 } },
+    { x: 240, y: 440, color: 0xcc44ff, points: 1000, isGem: true, small: true, move: { axis: 'y', speed: 55, range: 18, phaseOffset: 0.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 12 (111-120): Hız Artıyor
+  // ════════════════════════════════════════════════════════
+
+  { id: 111, cups: [
+    { x: 195, y: 300, color: 0xff6600, points: 600, small: true, move: { axis: 'x', speed: 75, range: 88 } }
+  ]},
+  { id: 112, cups: [
+    { x: 130, y: 240, color: 0x00ee55, points: 500, small: true, move: { axis: 'x', speed: 68, range: 48 } },
+    { x: 260, y: 370, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 72, range: 55 } }
+  ]},
+  { id: 113, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 650, small: true, move: { axis: 'x', speed: 72, range: 68 } },
+    { x: 110, y: 355, color: 0x00ee55, points: 500, small: true, move: { axis: 'y', speed: 65, range: 52 } },
+    { x: 280, y: 355, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 68, range: 52, phaseOffset: 1.0 } }
+  ]},
+  { id: 114, cups: [
+    { x: 115, y: 205, color: 0x00ee55, points: 520, small: true, move: { axis: 'x', speed: 65, range: 28 } },
+    { x: 275, y: 205, color: 0xff3333, points: 570, small: true, move: { axis: 'x', speed: 68, range: 26, phaseOffset: 0.8 } },
+    { x: 115, y: 415, color: 0xffcc00, points: 540, small: true, move: { axis: 'y', speed: 62, range: 50 } },
+    { x: 275, y: 415, color: 0x44aaff, points: 540, small: true, move: { axis: 'y', speed: 65, range: 50, phaseOffset: 1.2 } }
+  ]},
+  { id: 115, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 700, small: true, move: { axis: 'x', speed: 78, range: 68 } },
+    { x: 100, y: 280, color: 0x00ee55, points: 530, small: true, move: { axis: 'y', speed: 70, range: 50 } },
+    { x: 290, y: 280, color: 0xff3333, points: 580, small: true, move: { axis: 'y', speed: 73, range: 50, phaseOffset: 1.0 } },
+    { x: 130, y: 415, color: 0xffcc00, points: 560, small: true, move: { axis: 'x', speed: 66, range: 38 } },
+    { x: 260, y: 415, color: 0x44aaff, points: 560, small: true, move: { axis: 'x', speed: 69, range: 35, phaseOffset: 1.3 } }
+  ]},
+  { id: 116, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 700, move: { axis: 'x', speed: 76, range: 68 } },
+    { x: 100, y: 270, color: 0x00ee55, points: 500, small: true, move: { axis: 'y', speed: 66, range: 48 } },
+    { x: 290, y: 270, color: 0xff3333, points: 550, small: true, move: { axis: 'y', speed: 70, range: 48, phaseOffset: 0.9 } },
+    { x: 130, y: 385, color: 0xffcc00, points: 520, small: true, move: { axis: 'x', speed: 63, range: 38 } },
+    { x: 165, y: 445, color: 0xcc44ff, points: 1100, isGem: true, small: true, move: { axis: 'x', speed: 72, range: 48 } },
+    { x: 240, y: 445, color: 0xcc44ff, points: 1100, isGem: true, small: true, move: { axis: 'y', speed: 60, range: 18, phaseOffset: 0.5 } }
+  ]},
+  { id: 117, cups: [
+    { x: 195, y: 180, color: 0xff6600, points: 700, small: true, move: { axis: 'x', speed: 80, range: 65 } },
+    { x: 100, y: 245, color: 0x00ee55, points: 520, small: true, move: { axis: 'y', speed: 70, range: 46 } },
+    { x: 290, y: 245, color: 0xff3333, points: 570, small: true, move: { axis: 'y', speed: 74, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 330, color: 0xffcc00, points: 540, small: true, move: { axis: 'x', speed: 65, range: 22 } },
+    { x: 290, y: 330, color: 0x44aaff, points: 540, small: true, move: { axis: 'x', speed: 68, range: 22, phaseOffset: 0.7 } },
+    { x: 145, y: 420, color: 0xff88ff, points: 560, small: true, move: { axis: 'y', speed: 62, range: 18 } },
+    { x: 250, y: 420, color: 0xcc44ff, points: 1200, isGem: true, small: true, move: { axis: 'x', speed: 76, range: 42 } }
+  ]},
+  { id: 118, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 520, small: true, move: { axis: 'x', speed: 63, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 570, small: true, move: { axis: 'y', speed: 68, range: 48 } },
+    { x: 290, y: 195, color: 0xffcc00, points: 540, small: true, move: { axis: 'x', speed: 61, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 310, color: 0x44aaff, points: 540, small: true, move: { axis: 'y', speed: 66, range: 45, phaseOffset: 0.6 } },
+    { x: 290, y: 310, color: 0xff6600, points: 580, small: true, move: { axis: 'y', speed: 70, range: 45, phaseOffset: 1.3 } },
+    { x: 100, y: 430, color: 0xff88ff, points: 540, small: true, move: { axis: 'x', speed: 65, range: 22, phaseOffset: 1.0 } },
+    { x: 250, y: 430, color: 0xcc44ff, points: 1250, isGem: true, small: true, move: { axis: 'x', speed: 74, range: 38 } },
+    { x: 195, y: 445, color: 0xff88ff, points: 560, small: true, move: { axis: 'y', speed: 60, range: 16, phaseOffset: 1.7 } }
+  ]},
+  { id: 119, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 750, small: true, move: { axis: 'x', speed: 83, range: 65 } },
+    { x: 100, y: 240, color: 0x00ee55, points: 550, small: true, move: { axis: 'y', speed: 73, range: 46 } },
+    { x: 290, y: 240, color: 0xff3333, points: 600, small: true, move: { axis: 'y', speed: 76, range: 46, phaseOffset: 1.1 } },
+    { x: 100, y: 318, color: 0xffcc00, points: 560, small: true, move: { axis: 'x', speed: 68, range: 22 } },
+    { x: 290, y: 318, color: 0x44aaff, points: 560, small: true, move: { axis: 'x', speed: 71, range: 22, phaseOffset: 0.7 } },
+    { x: 100, y: 405, color: 0xff88ff, points: 550, small: true, move: { axis: 'y', speed: 65, range: 40 } },
+    { x: 290, y: 405, color: 0xff88ff, points: 550, small: true, move: { axis: 'y', speed: 63, range: 40, phaseOffset: 1.4 } },
+    { x: 148, y: 445, color: 0xcc44ff, points: 1350, isGem: true, small: true, move: { axis: 'x', speed: 78, range: 38 } },
+    { x: 248, y: 445, color: 0xcc44ff, points: 1350, isGem: true, small: true, move: { axis: 'y', speed: 66, range: 16, phaseOffset: 0.5 } }
+  ]},
+  { id: 120, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 820, move: { axis: 'x', speed: 92, range: 68 } },
+    { x: 100, y: 238, color: 0x00ee55, points: 620, small: true, move: { axis: 'y', speed: 80, range: 46 } },
+    { x: 290, y: 238, color: 0xff3333, points: 670, small: true, move: { axis: 'y', speed: 84, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 308, color: 0xffcc00, points: 620, small: true, move: { axis: 'x', speed: 75, range: 22 } },
+    { x: 290, y: 308, color: 0x44aaff, points: 620, small: true, move: { axis: 'x', speed: 78, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 385, color: 0xff88ff, points: 600, small: true, move: { axis: 'y', speed: 72, range: 40 } },
+    { x: 290, y: 385, color: 0xff88ff, points: 600, small: true, move: { axis: 'y', speed: 70, range: 40, phaseOffset: 1.5 } },
+    { x: 145, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 86, range: 38 } },
+    { x: 245, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 82, range: 35, phaseOffset: 1.2 } },
+    { x: 195, y: 448, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'y', speed: 74, range: 14, phaseOffset: 0.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 13 (121-130): Farklı Düzenler — Yeni Formasyonlar
+  // ════════════════════════════════════════════════════════
+
+  { id: 121, cups: [
+    { x: 195, y: 200, color: 0xffcc00, points: 600 },
+    { x: 100, y: 350, color: 0x00ee55, points: 400 },
+    { x: 290, y: 350, color: 0xff3333, points: 450 }
+  ]},
+  { id: 122, cups: [
+    { x: 100, y: 200, color: 0x00ee55, points: 420 },
+    { x: 290, y: 200, color: 0xff3333, points: 470 },
+    { x: 195, y: 310, color: 0xffcc00, points: 600, move: { axis: 'x', speed: 55, range: 65 } },
+    { x: 100, y: 420, color: 0x44aaff, points: 440 },
+    { x: 290, y: 420, color: 0xff6600, points: 490 }
+  ]},
+  { id: 123, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 650, move: { axis: 'y', speed: 58, range: 55 } },
+    { x: 100, y: 305, color: 0x00ee55, points: 470, move: { axis: 'x', speed: 52, range: 28 } },
+    { x: 290, y: 305, color: 0xff3333, points: 520, move: { axis: 'x', speed: 55, range: 26, phaseOffset: 0.8 } },
+    { x: 195, y: 425, color: 0xcc44ff, points: 1000, isGem: true, move: { axis: 'x', speed: 62, range: 65 } }
+  ]},
+  { id: 124, cups: [
+    { x: 120, y: 200, color: 0x00ee55, points: 450, small: true, move: { axis: 'y', speed: 60, range: 48 } },
+    { x: 270, y: 200, color: 0xff3333, points: 500, small: true, move: { axis: 'y', speed: 63, range: 48, phaseOffset: 1.0 } },
+    { x: 195, y: 310, color: 0xffcc00, points: 650, move: { axis: 'x', speed: 70, range: 68 } },
+    { x: 120, y: 420, color: 0x44aaff, points: 470, small: true },
+    { x: 270, y: 420, color: 0xff6600, points: 520, small: true }
+  ]},
+  { id: 125, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 420 },
+    { x: 195, y: 195, color: 0xff3333, points: 470 },
+    { x: 290, y: 195, color: 0xffcc00, points: 550 },
+    { x: 100, y: 310, color: 0x44aaff, points: 440 },
+    { x: 290, y: 310, color: 0xff6600, points: 490 },
+    { x: 100, y: 425, color: 0xff88ff, points: 460 },
+    { x: 195, y: 425, color: 0xcc44ff, points: 1050, isGem: true },
+    { x: 290, y: 425, color: 0xff88ff, points: 460 }
+  ]},
+  { id: 126, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 720, move: { axis: 'x', speed: 80, range: 68 } },
+    { x: 100, y: 265, color: 0x00ee55, points: 530, small: true, move: { axis: 'y', speed: 70, range: 48 } },
+    { x: 290, y: 265, color: 0xff3333, points: 580, small: true, move: { axis: 'y', speed: 74, range: 48, phaseOffset: 0.9 } },
+    { x: 140, y: 390, color: 0xffcc00, points: 550, small: true, move: { axis: 'x', speed: 67, range: 38 } },
+    { x: 255, y: 390, color: 0x44aaff, points: 550, small: true, move: { axis: 'x', speed: 64, range: 35, phaseOffset: 1.2 } }
+  ]},
+  { id: 127, cups: [
+    { x: 195, y: 180, color: 0xff6600, points: 730, small: true, move: { axis: 'x', speed: 84, range: 65 } },
+    { x: 100, y: 245, color: 0x00ee55, points: 540, small: true, move: { axis: 'y', speed: 74, range: 46 } },
+    { x: 290, y: 245, color: 0xff3333, points: 590, small: true, move: { axis: 'y', speed: 78, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 335, color: 0xffcc00, points: 560, small: true, move: { axis: 'x', speed: 69, range: 22 } },
+    { x: 290, y: 335, color: 0x44aaff, points: 560, small: true, move: { axis: 'x', speed: 72, range: 22, phaseOffset: 0.7 } },
+    { x: 195, y: 425, color: 0xff88ff, points: 580, small: true, move: { axis: 'y', speed: 66, range: 18 } },
+    { x: 155, y: 445, color: 0xcc44ff, points: 1250, isGem: true, small: true, move: { axis: 'x', speed: 78, range: 42 } }
+  ]},
+  { id: 128, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 540, small: true, move: { axis: 'x', speed: 67, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 590, small: true, move: { axis: 'y', speed: 72, range: 48 } },
+    { x: 290, y: 195, color: 0xffcc00, points: 560, small: true, move: { axis: 'x', speed: 65, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 315, color: 0x44aaff, points: 560, small: true, move: { axis: 'y', speed: 70, range: 45, phaseOffset: 0.6 } },
+    { x: 290, y: 315, color: 0xff6600, points: 600, small: true, move: { axis: 'y', speed: 74, range: 45, phaseOffset: 1.3 } },
+    { x: 100, y: 432, color: 0xff88ff, points: 560, small: true, move: { axis: 'x', speed: 69, range: 22, phaseOffset: 1.0 } },
+    { x: 250, y: 432, color: 0xcc44ff, points: 1300, isGem: true, small: true, move: { axis: 'x', speed: 78, range: 38 } },
+    { x: 195, y: 446, color: 0xff88ff, points: 580, small: true, move: { axis: 'y', speed: 64, range: 16, phaseOffset: 1.7 } }
+  ]},
+  { id: 129, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 780, small: true, move: { axis: 'x', speed: 87, range: 65 } },
+    { x: 100, y: 242, color: 0x00ee55, points: 570, small: true, move: { axis: 'y', speed: 77, range: 46 } },
+    { x: 290, y: 242, color: 0xff3333, points: 620, small: true, move: { axis: 'y', speed: 80, range: 46, phaseOffset: 1.1 } },
+    { x: 100, y: 320, color: 0xffcc00, points: 580, small: true, move: { axis: 'x', speed: 72, range: 22 } },
+    { x: 290, y: 320, color: 0x44aaff, points: 580, small: true, move: { axis: 'x', speed: 75, range: 22, phaseOffset: 0.7 } },
+    { x: 100, y: 408, color: 0xff88ff, points: 570, small: true, move: { axis: 'y', speed: 69, range: 40 } },
+    { x: 290, y: 408, color: 0xff88ff, points: 570, small: true, move: { axis: 'y', speed: 67, range: 40, phaseOffset: 1.4 } },
+    { x: 148, y: 446, color: 0xcc44ff, points: 1400, isGem: true, small: true, move: { axis: 'x', speed: 82, range: 38 } },
+    { x: 248, y: 446, color: 0xcc44ff, points: 1400, isGem: true, small: true, move: { axis: 'y', speed: 70, range: 16, phaseOffset: 0.5 } }
+  ]},
+  { id: 130, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 840, move: { axis: 'x', speed: 94, range: 68 } },
+    { x: 100, y: 238, color: 0x00ee55, points: 640, small: true, move: { axis: 'y', speed: 82, range: 46 } },
+    { x: 290, y: 238, color: 0xff3333, points: 690, small: true, move: { axis: 'y', speed: 86, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 308, color: 0xffcc00, points: 640, small: true, move: { axis: 'x', speed: 77, range: 22 } },
+    { x: 290, y: 308, color: 0x44aaff, points: 640, small: true, move: { axis: 'x', speed: 80, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 385, color: 0xff88ff, points: 620, small: true, move: { axis: 'y', speed: 74, range: 40 } },
+    { x: 290, y: 385, color: 0xff88ff, points: 620, small: true, move: { axis: 'y', speed: 72, range: 40, phaseOffset: 1.5 } },
+    { x: 145, y: 440, color: 0xcc44ff, points: 1600, isGem: true, small: true, move: { axis: 'x', speed: 88, range: 38 } },
+    { x: 245, y: 440, color: 0xcc44ff, points: 1600, isGem: true, small: true, move: { axis: 'x', speed: 84, range: 35, phaseOffset: 1.2 } },
+    { x: 195, y: 448, color: 0xcc44ff, points: 1600, isGem: true, small: true, move: { axis: 'y', speed: 76, range: 14, phaseOffset: 0.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 14 (131-140): Ultra Hassasiyet
+  // ════════════════════════════════════════════════════════
+
+  { id: 131, cups: [
+    { x: 195, y: 300, color: 0xff6600, points: 700, small: true, move: { axis: 'x', speed: 92, range: 100 } }
+  ]},
+  { id: 132, cups: [
+    { x: 195, y: 215, color: 0x00ee55, points: 640, small: true, move: { axis: 'x', speed: 88, range: 90 } },
+    { x: 195, y: 400, color: 0xff3333, points: 680, small: true, move: { axis: 'x', speed: 91, range: 90, phaseOffset: 3.14 } }
+  ]},
+  { id: 133, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 720, small: true, move: { axis: 'x', speed: 78, range: 68 } },
+    { x: 108, y: 385, color: 0x00ee55, points: 570, small: true, move: { axis: 'y', speed: 73, range: 55 } },
+    { x: 282, y: 385, color: 0xff3333, points: 620, small: true, move: { axis: 'y', speed: 76, range: 55, phaseOffset: 1.0 } }
+  ]},
+  { id: 134, cups: [
+    { x: 115, y: 205, color: 0x00ee55, points: 590, small: true, move: { axis: 'x', speed: 72, range: 28 } },
+    { x: 275, y: 205, color: 0xff3333, points: 640, small: true, move: { axis: 'x', speed: 76, range: 26, phaseOffset: 0.8 } },
+    { x: 115, y: 415, color: 0xffcc00, points: 610, small: true, move: { axis: 'y', speed: 69, range: 50 } },
+    { x: 275, y: 415, color: 0x44aaff, points: 610, small: true, move: { axis: 'y', speed: 72, range: 50, phaseOffset: 1.2 } }
+  ]},
+  { id: 135, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 740, small: true, move: { axis: 'x', speed: 84, range: 68 } },
+    { x: 100, y: 280, color: 0x00ee55, points: 580, small: true, move: { axis: 'y', speed: 76, range: 50 } },
+    { x: 290, y: 280, color: 0xff3333, points: 630, small: true, move: { axis: 'y', speed: 79, range: 50, phaseOffset: 1.0 } },
+    { x: 130, y: 415, color: 0xffcc00, points: 610, small: true, move: { axis: 'x', speed: 72, range: 38 } },
+    { x: 260, y: 415, color: 0x44aaff, points: 610, small: true, move: { axis: 'x', speed: 75, range: 35, phaseOffset: 1.3 } }
+  ]},
+  { id: 136, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 750, move: { axis: 'x', speed: 82, range: 68 } },
+    { x: 100, y: 270, color: 0x00ee55, points: 560, small: true, move: { axis: 'y', speed: 72, range: 48 } },
+    { x: 290, y: 270, color: 0xff3333, points: 610, small: true, move: { axis: 'y', speed: 76, range: 48, phaseOffset: 0.9 } },
+    { x: 140, y: 390, color: 0xffcc00, points: 580, small: true, move: { axis: 'x', speed: 69, range: 38 } },
+    { x: 170, y: 446, color: 0xcc44ff, points: 1200, isGem: true, small: true, move: { axis: 'x', speed: 78, range: 48 } },
+    { x: 235, y: 446, color: 0xcc44ff, points: 1200, isGem: true, small: true, move: { axis: 'y', speed: 66, range: 18, phaseOffset: 0.5 } }
+  ]},
+  { id: 137, cups: [
+    { x: 195, y: 180, color: 0xff6600, points: 760, small: true, move: { axis: 'x', speed: 86, range: 65 } },
+    { x: 100, y: 248, color: 0x00ee55, points: 570, small: true, move: { axis: 'y', speed: 76, range: 46 } },
+    { x: 290, y: 248, color: 0xff3333, points: 620, small: true, move: { axis: 'y', speed: 80, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 338, color: 0xffcc00, points: 590, small: true, move: { axis: 'x', speed: 71, range: 22 } },
+    { x: 290, y: 338, color: 0x44aaff, points: 590, small: true, move: { axis: 'x', speed: 74, range: 22, phaseOffset: 0.7 } },
+    { x: 155, y: 422, color: 0xff88ff, points: 610, small: true, move: { axis: 'y', speed: 68, range: 18 } },
+    { x: 248, y: 422, color: 0xcc44ff, points: 1300, isGem: true, small: true, move: { axis: 'x', speed: 80, range: 42 } }
+  ]},
+  { id: 138, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 570, small: true, move: { axis: 'x', speed: 69, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 620, small: true, move: { axis: 'y', speed: 74, range: 48 } },
+    { x: 290, y: 195, color: 0xffcc00, points: 590, small: true, move: { axis: 'x', speed: 67, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 318, color: 0x44aaff, points: 590, small: true, move: { axis: 'y', speed: 72, range: 45, phaseOffset: 0.6 } },
+    { x: 290, y: 318, color: 0xff6600, points: 630, small: true, move: { axis: 'y', speed: 76, range: 45, phaseOffset: 1.3 } },
+    { x: 100, y: 433, color: 0xff88ff, points: 590, small: true, move: { axis: 'x', speed: 71, range: 22, phaseOffset: 1.0 } },
+    { x: 252, y: 433, color: 0xcc44ff, points: 1350, isGem: true, small: true, move: { axis: 'x', speed: 80, range: 38 } },
+    { x: 195, y: 447, color: 0xff88ff, points: 610, small: true, move: { axis: 'y', speed: 66, range: 16, phaseOffset: 1.7 } }
+  ]},
+  { id: 139, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 800, small: true, move: { axis: 'x', speed: 90, range: 65 } },
+    { x: 100, y: 244, color: 0x00ee55, points: 590, small: true, move: { axis: 'y', speed: 80, range: 46 } },
+    { x: 290, y: 244, color: 0xff3333, points: 640, small: true, move: { axis: 'y', speed: 83, range: 46, phaseOffset: 1.1 } },
+    { x: 100, y: 323, color: 0xffcc00, points: 600, small: true, move: { axis: 'x', speed: 75, range: 22 } },
+    { x: 290, y: 323, color: 0x44aaff, points: 600, small: true, move: { axis: 'x', speed: 78, range: 22, phaseOffset: 0.7 } },
+    { x: 100, y: 410, color: 0xff88ff, points: 590, small: true, move: { axis: 'y', speed: 72, range: 40 } },
+    { x: 290, y: 410, color: 0xff88ff, points: 590, small: true, move: { axis: 'y', speed: 70, range: 40, phaseOffset: 1.4 } },
+    { x: 148, y: 447, color: 0xcc44ff, points: 1450, isGem: true, small: true, move: { axis: 'x', speed: 85, range: 38 } },
+    { x: 248, y: 447, color: 0xcc44ff, points: 1450, isGem: true, small: true, move: { axis: 'y', speed: 73, range: 16, phaseOffset: 0.5 } }
+  ]},
+  { id: 140, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 860, move: { axis: 'x', speed: 96, range: 68 } },
+    { x: 100, y: 238, color: 0x00ee55, points: 660, small: true, move: { axis: 'y', speed: 84, range: 46 } },
+    { x: 290, y: 238, color: 0xff3333, points: 710, small: true, move: { axis: 'y', speed: 88, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 308, color: 0xffcc00, points: 660, small: true, move: { axis: 'x', speed: 79, range: 22 } },
+    { x: 290, y: 308, color: 0x44aaff, points: 660, small: true, move: { axis: 'x', speed: 82, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 385, color: 0xff88ff, points: 640, small: true, move: { axis: 'y', speed: 76, range: 40 } },
+    { x: 290, y: 385, color: 0xff88ff, points: 640, small: true, move: { axis: 'y', speed: 74, range: 40, phaseOffset: 1.5 } },
+    { x: 145, y: 440, color: 0xcc44ff, points: 1650, isGem: true, small: true, move: { axis: 'x', speed: 90, range: 38 } },
+    { x: 245, y: 440, color: 0xcc44ff, points: 1650, isGem: true, small: true, move: { axis: 'x', speed: 86, range: 35, phaseOffset: 1.2 } },
+    { x: 195, y: 448, color: 0xcc44ff, points: 1650, isGem: true, small: true, move: { axis: 'y', speed: 78, range: 14, phaseOffset: 0.5 } }
+  ]},
+
+  // ════════════════════════════════════════════════════════
+  // BÖLÜM 15 (141-150): GRANDMASTER
+  // ════════════════════════════════════════════════════════
+
+  { id: 141, cups: [
+    { x: 195, y: 300, color: 0xff6600, points: 900, small: true, move: { axis: 'x', speed: 96, range: 100 } }
+  ]},
+  { id: 142, cups: [
+    { x: 195, y: 215, color: 0x00ee55, points: 700, small: true, move: { axis: 'x', speed: 92, range: 90 } },
+    { x: 195, y: 400, color: 0xff3333, points: 750, small: true, move: { axis: 'x', speed: 95, range: 90, phaseOffset: 3.14 } }
+  ]},
+  { id: 143, cups: [
+    { x: 195, y: 185, color: 0xffcc00, points: 780, small: true, move: { axis: 'x', speed: 82, range: 68 } },
+    { x: 108, y: 385, color: 0x00ee55, points: 620, small: true, move: { axis: 'y', speed: 77, range: 55 } },
+    { x: 282, y: 385, color: 0xff3333, points: 670, small: true, move: { axis: 'y', speed: 80, range: 55, phaseOffset: 1.0 } }
+  ]},
+  { id: 144, cups: [
+    { x: 115, y: 205, color: 0x00ee55, points: 640, small: true, move: { axis: 'x', speed: 76, range: 28 } },
+    { x: 275, y: 205, color: 0xff3333, points: 690, small: true, move: { axis: 'x', speed: 80, range: 26, phaseOffset: 0.8 } },
+    { x: 115, y: 415, color: 0xffcc00, points: 660, small: true, move: { axis: 'y', speed: 73, range: 50 } },
+    { x: 275, y: 415, color: 0x44aaff, points: 660, small: true, move: { axis: 'y', speed: 76, range: 50, phaseOffset: 1.2 } }
+  ]},
+  { id: 145, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 800, small: true, move: { axis: 'x', speed: 88, range: 68 } },
+    { x: 100, y: 280, color: 0x00ee55, points: 630, small: true, move: { axis: 'y', speed: 80, range: 50 } },
+    { x: 290, y: 280, color: 0xff3333, points: 680, small: true, move: { axis: 'y', speed: 83, range: 50, phaseOffset: 1.0 } },
+    { x: 130, y: 415, color: 0xffcc00, points: 660, small: true, move: { axis: 'x', speed: 76, range: 38 } },
+    { x: 260, y: 415, color: 0x44aaff, points: 660, small: true, move: { axis: 'x', speed: 79, range: 35, phaseOffset: 1.3 } }
+  ]},
+  { id: 146, cups: [
+    { x: 195, y: 185, color: 0xff6600, points: 810, move: { axis: 'x', speed: 86, range: 68 } },
+    { x: 100, y: 270, color: 0x00ee55, points: 610, small: true, move: { axis: 'y', speed: 76, range: 48 } },
+    { x: 290, y: 270, color: 0xff3333, points: 660, small: true, move: { axis: 'y', speed: 80, range: 48, phaseOffset: 0.9 } },
+    { x: 145, y: 392, color: 0xffcc00, points: 630, small: true, move: { axis: 'x', speed: 73, range: 38 } },
+    { x: 172, y: 447, color: 0xcc44ff, points: 1350, isGem: true, small: true, move: { axis: 'x', speed: 82, range: 48 } },
+    { x: 232, y: 447, color: 0xcc44ff, points: 1350, isGem: true, small: true, move: { axis: 'y', speed: 70, range: 18, phaseOffset: 0.5 } }
+  ]},
+  { id: 147, cups: [
+    { x: 195, y: 180, color: 0xff6600, points: 820, small: true, move: { axis: 'x', speed: 90, range: 65 } },
+    { x: 100, y: 250, color: 0x00ee55, points: 630, small: true, move: { axis: 'y', speed: 80, range: 46 } },
+    { x: 290, y: 250, color: 0xff3333, points: 680, small: true, move: { axis: 'y', speed: 84, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 342, color: 0xffcc00, points: 650, small: true, move: { axis: 'x', speed: 75, range: 22 } },
+    { x: 290, y: 342, color: 0x44aaff, points: 650, small: true, move: { axis: 'x', speed: 78, range: 22, phaseOffset: 0.7 } },
+    { x: 160, y: 425, color: 0xff88ff, points: 670, small: true, move: { axis: 'y', speed: 72, range: 18 } },
+    { x: 245, y: 425, color: 0xcc44ff, points: 1400, isGem: true, small: true, move: { axis: 'x', speed: 84, range: 42 } }
+  ]},
+  { id: 148, cups: [
+    { x: 100, y: 195, color: 0x00ee55, points: 630, small: true, move: { axis: 'x', speed: 73, range: 22 } },
+    { x: 195, y: 195, color: 0xff3333, points: 680, small: true, move: { axis: 'y', speed: 78, range: 48 } },
+    { x: 290, y: 195, color: 0xffcc00, points: 650, small: true, move: { axis: 'x', speed: 71, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 320, color: 0x44aaff, points: 650, small: true, move: { axis: 'y', speed: 76, range: 45, phaseOffset: 0.6 } },
+    { x: 290, y: 320, color: 0xff6600, points: 690, small: true, move: { axis: 'y', speed: 80, range: 45, phaseOffset: 1.3 } },
+    { x: 100, y: 434, color: 0xff88ff, points: 650, small: true, move: { axis: 'x', speed: 75, range: 22, phaseOffset: 1.0 } },
+    { x: 253, y: 434, color: 0xcc44ff, points: 1450, isGem: true, small: true, move: { axis: 'x', speed: 84, range: 38 } },
+    { x: 195, y: 448, color: 0xff88ff, points: 670, small: true, move: { axis: 'y', speed: 70, range: 16, phaseOffset: 1.7 } }
+  ]},
+  { id: 149, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 850, small: true, move: { axis: 'x', speed: 94, range: 65 } },
+    { x: 100, y: 246, color: 0x00ee55, points: 650, small: true, move: { axis: 'y', speed: 84, range: 46 } },
+    { x: 290, y: 246, color: 0xff3333, points: 700, small: true, move: { axis: 'y', speed: 87, range: 46, phaseOffset: 1.1 } },
+    { x: 100, y: 326, color: 0xffcc00, points: 660, small: true, move: { axis: 'x', speed: 79, range: 22 } },
+    { x: 290, y: 326, color: 0x44aaff, points: 660, small: true, move: { axis: 'x', speed: 82, range: 22, phaseOffset: 0.7 } },
+    { x: 100, y: 413, color: 0xff88ff, points: 650, small: true, move: { axis: 'y', speed: 76, range: 40 } },
+    { x: 290, y: 413, color: 0xff88ff, points: 650, small: true, move: { axis: 'y', speed: 74, range: 40, phaseOffset: 1.4 } },
+    { x: 148, y: 448, color: 0xcc44ff, points: 1550, isGem: true, small: true, move: { axis: 'x', speed: 89, range: 38 } },
+    { x: 248, y: 448, color: 0xcc44ff, points: 1550, isGem: true, small: true, move: { axis: 'y', speed: 77, range: 16, phaseOffset: 0.5 } }
+  ]},
+  { id: 150, cups: [
+    { x: 195, y: 175, color: 0xff6600, points: 900, move: { axis: 'x', speed: 98, range: 68 } },
+    { x: 100, y: 238, color: 0x00ee55, points: 700, small: true, move: { axis: 'y', speed: 88, range: 46 } },
+    { x: 290, y: 238, color: 0xff3333, points: 750, small: true, move: { axis: 'y', speed: 92, range: 46, phaseOffset: 1.0 } },
+    { x: 100, y: 308, color: 0xffcc00, points: 700, small: true, move: { axis: 'x', speed: 83, range: 22 } },
+    { x: 290, y: 308, color: 0x44aaff, points: 700, small: true, move: { axis: 'x', speed: 86, range: 22, phaseOffset: 0.8 } },
+    { x: 100, y: 385, color: 0xff88ff, points: 680, small: true, move: { axis: 'y', speed: 80, range: 40 } },
+    { x: 290, y: 385, color: 0xff88ff, points: 680, small: true, move: { axis: 'y', speed: 78, range: 40, phaseOffset: 1.5 } },
+    { x: 145, y: 440, color: 0xcc44ff, points: 1700, isGem: true, small: true, move: { axis: 'x', speed: 94, range: 38 } },
+    { x: 245, y: 440, color: 0xcc44ff, points: 1700, isGem: true, small: true, move: { axis: 'x', speed: 90, range: 35, phaseOffset: 1.2 } },
+    { x: 195, y: 448, color: 0xcc44ff, points: 1700, isGem: true, small: true, move: { axis: 'y', speed: 82, range: 14, phaseOffset: 0.5 } }
+  ]}
+];
 ];
