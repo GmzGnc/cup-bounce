@@ -8,8 +8,18 @@ export class BootScene extends Phaser.Scene {
     console.log('[Boot] build assets yükleniyor');
     ['kafe', 'bahce', 'salon', 'sahne', 'atolye'].forEach(alan => {
       for (let i = 0; i < 4; i++) {
-        this.load.image(`build_${alan}_${i}`, `assets/build/${alan}_${i}.png`);
+        const key  = `build_${alan}_${i}`;
+        const path = `./assets/build/${alan}_${i}.png`;
+        this.load.image(key, path);
+        console.log('[Boot] yükleniyor:', key, path);
       }
+    });
+
+    this.load.on('filecomplete', (key) => {
+      if (key.startsWith('build_')) console.log('[Boot] yüklendi:', key);
+    });
+    this.load.on('loaderror', (file) => {
+      if (file.key.startsWith('build_')) console.error('[Boot] HATA:', file.key, file.url);
     });
 
     // Read all localStorage keys in one pass and cache globally.
