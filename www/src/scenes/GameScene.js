@@ -53,6 +53,9 @@ export class GameScene extends Phaser.Scene {
       try { return JSON.parse(localStorage.getItem('cupbounce_user') || 'null')?.uid ?? null; }
       catch { return null; }
     })();
+    // Global ref — EconomyManager._loadFromCloudIfNeeded() ve BuildScene erişimi için
+    window.cloudSaveManager = this.cloud;
+
     if (this.cloud.isAvailable() && this._cloudUid) {
       EconomyManager.registerCloudSave(this.cloud, this._cloudUid);
       // Buluttan yükle → registry'yi güncelle (async; hafif gecikme kabul edilebilir)
@@ -60,6 +63,9 @@ export class GameScene extends Phaser.Scene {
         if (data) this._syncRegistry();
       }).catch(() => {});
     }
+
+    // Yeni port / boş localStorage → Firestore'dan otomatik yükle (fire-and-forget)
+    this.economy._loadFromCloudIfNeeded();
 
     // ── Session score (resets on game over; gems/coins persist via EconomyManager) ──
     this.score = 0;

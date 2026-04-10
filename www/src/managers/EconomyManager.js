@@ -159,6 +159,57 @@ export class EconomyManager {
     _cuid = uid;
   }
 
+  /**
+   * localStorage boşsa (yeni port / ilk kurulum) Firestore'dan veri çek.
+   * Uid yoksa FirebaseAuthentication plugin'inden session'a bak
+   * (Capacitor kendi store'unda tutar, localStorage'a bağlı değil).
+   * Veri bulunursa localStorage'a yazılır ve sayfa yenilenir.
+   * Fire-and-forget — constructor yerine GameScene.create()'ten çağrılır.
+   */
+  async _loadFromCloudIfNeeded() {
+    const hasLocal = localStorage.getItem(COINS_KEY) !== null;
+    if (hasLocal) return; // Zaten veri var, Firestore'a gitme
+
+    try {
+      const mgr = window.cloudSaveManager;
+      if (!mgr) return;
+
+      // UID'yi önce localStorage'dan dene (port değişmemişse burada olur)
+      let uid = null;
+      try {
+        uid = JSON.parse(localStorage.getItem('cupbounce_user') || 'null')?.uid ?? null;
+      } catch {}
+
+      // localStorage boş (port değişti) → FirebaseAuth session'dan dene
+      if (!uid) {
+        const authPlugin = window.Capacitor?.Plugins?.FirebaseAuthentication;
+        if (authPlugin) {
+          const result = await authPlugin.getCurrentUser();
+          uid = result?.user?.uid ?? null;
+          if (uid && result?.user) {
+            // Kullanıcı bilgisini localStorage'a geri yaz
+            localStorage.setItem('cupbounce_user', JSON.stringify({
+              uid,
+              displayName: result.user.displayName || 'Oyuncu',
+              isGuest: !result.user.displayName,
+            }));
+          }
+        }
+      }
+
+      if (!uid) return; // Giriş yapılmamış — çekme
+
+      const data = await mgr.load(uid);
+      if (!data) return; // Bulutta kayıt yok
+
+      console.log('[Economy] Firestore\'dan yüklendi:', data);
+      // CloudSaveManager._mergeAndApply zaten localStorage'a yazdı → yenile
+      location.reload();
+    } catch (e) {
+      console.warn('[Economy] Firestore yükleme hatası:', e);
+    }
+  }
+
   /** Sahne kapanırken çağrılır — bekleyen kayıtları temizler. */
   static unregisterCloudSave() {
     if (_csm) _csm.cancelAutosave();
