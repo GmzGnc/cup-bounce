@@ -73,6 +73,25 @@ export class BuildScene extends Phaser.Scene {
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   create() {
+    // Tüm build texture'larını yeşil arka planla yeniden işle (alpha kanalını yok et)
+    ['kafe','bahce','salon','sahne','atolye'].forEach(alan => {
+      for (let i = 0; i < 4; i++) {
+        const key = `build_${alan}_${i}`;
+        if (!this.textures.exists(key)) return;
+        const tex = this.textures.get(key);
+        const src = tex.getSourceImage();
+        const canvas = document.createElement('canvas');
+        canvas.width = src.width;
+        canvas.height = src.height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#5a8f3c';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(src, 0, 0);
+        this.textures.remove(key);
+        this.textures.addCanvas(key, canvas);
+      }
+    });
+
     const W = this.scale.width;   // 390
     const H = this.scale.height;  // 844
     this._W    = W;
