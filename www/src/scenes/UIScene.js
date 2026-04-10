@@ -287,6 +287,7 @@ export class UIScene extends Phaser.Scene {
 
   // ── Registry ─────────────────────────────────────────────────────────────────
   _onRegistryChange(parent, key) {
+    if (!this.scene.isActive('UIScene')) return;
     if (key === 'timer') return;
     this._refresh();
   }
