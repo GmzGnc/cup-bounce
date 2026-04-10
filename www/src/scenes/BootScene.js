@@ -15,7 +15,7 @@ export class BootScene extends Phaser.Scene {
       for (let i = 0; i < 4; i++) {
         const key = `build_${alan}_${i}`;
         if (this.textures.exists(key)) this.textures.remove(key);
-        this.load.image(key, `./assets/build/${alan}_${i}.png`);
+        this.load.image(key, `./assets/build/${alan}_${i}.jpg`);
         console.log('[Boot] yükleniyor:', key);
       }
     });
