@@ -727,26 +727,20 @@ export class BuildScene extends Phaser.Scene {
   // ── Görsel yardımcısı ────────────────────────────────────────────────────────
 
   _drawBuildingImage(x, y, texKey, size, depth = 1, alpha = 1, scrollFixed = false) {
-    if (!this.textures.exists(texKey)) return null;
+    // Yeşil arka plan kutusu — her zaman görünür
+    const bg = this.add.rectangle(x, y, size, size, 0x5a8f3c);
+    bg.setDepth(depth);
+    if (scrollFixed) bg.setScrollFactor(0);
 
-    // RenderTexture: yeşil arka plan + görsel birleşik — alpha kanalı sıfırlanır
-    const rt = this.add.renderTexture(x, y, size, size);
-    rt.setOrigin(0.5);
+    // Görsel varsa üstüne ekle
+    if (this.textures.exists(texKey)) {
+      const img = this.add.image(x, y, texKey);
+      const scale = (size - 4) / Math.max(img.width, img.height);
+      img.setScale(scale).setDepth(depth + 0.1).setAlpha(alpha);
+      if (scrollFixed) img.setScrollFactor(0);
+    }
 
-    // Yeşil arka plan doldur
-    rt.fill(0x5a8f3c, 1);
-
-    // Görseli üstüne çiz
-    const tempImg = this.make.image({ x: 0, y: 0, key: texKey, add: false });
-    const scale = size / Math.max(tempImg.width, tempImg.height);
-    tempImg.setScale(scale);
-    rt.draw(tempImg, size / 2, size / 2);
-    tempImg.destroy();
-
-    rt.setDepth(depth).setAlpha(alpha);
-    if (scrollFixed) rt.setScrollFactor(0);
-
-    return rt;
+    return bg;
   }
 
   // ── Navigasyon ───────────────────────────────────────────────────────────────
