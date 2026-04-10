@@ -85,7 +85,7 @@ export class BuildScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setBounds(0, 0, WORLD_W, WORLD_H);
     // Başlangıç scroll — dünyanın üstünü göster, header'ın altından başla
-    cam.scrollX = 0;
+    cam.scrollX = 195; // haritanın üst ortası
     cam.scrollY = 0;
 
     this._drawWorld();
@@ -169,7 +169,7 @@ export class BuildScene extends Phaser.Scene {
     // Dekorasyonlar
     for (const d of DECO) {
       this.add.text(d.x, d.y, d.e, {
-        fontSize: '22px', fontFamily: 'Arial',
+        fontSize: '32px', fontFamily: 'Arial',
       }).setOrigin(0.5).setDepth(3);
     }
   }
@@ -201,7 +201,7 @@ export class BuildScene extends Phaser.Scene {
       // Tamamlandı: gerçek bina görseli
       const texKey = `build_${b.id}_3`;
       // Şeffaf PNG arka planını gizlemek için zemin rengi daire
-      reg(this.add.circle(b.x, b.y, R, 0x5a8f3c).setDepth(4));
+      reg(this.add.circle(b.x, b.y, 85, 0x6aaf4c).setDepth(4));
       // Yeşil halka
       reg(this.add.circle(b.x, b.y, R + 6, 0x00ff88, 0).setDepth(4)
         .setStrokeStyle(3, 0x44ffaa, 0.85));
@@ -239,7 +239,7 @@ export class BuildScene extends Phaser.Scene {
     } else {
       // İnşaat bekliyor
       // Zemin dairesi (her zaman çiz — şeffaflık gözükmesin)
-      reg(this.add.circle(b.x, b.y, R, 0x5a8f3c).setDepth(4));
+      reg(this.add.circle(b.x, b.y, 85, 0x6aaf4c).setDepth(4));
       reg(this.add.circle(b.x, b.y, R, 0x2a3a2a, 0.5).setDepth(5)
         .setStrokeStyle(2, 0x3355aa, 0.7));
       // Adım görseli (varsa, yarı şeffaf)
