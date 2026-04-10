@@ -4,6 +4,13 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
+    // ── İnşa görselleri ──────────────────────────────────────────────────────
+    ['kafe', 'bahce', 'salon', 'sahne', 'atolye'].forEach(alan => {
+      for (let i = 0; i < 4; i++) {
+        this.load.image(`build_${alan}_${i}`, `assets/build/${alan}_${i}.png`);
+      }
+    });
+
     // Read all localStorage keys in one pass and cache globally.
     // Managers check window.CupBounceCache first → zero redundant reads.
     const KEYS = [

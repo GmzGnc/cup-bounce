@@ -221,11 +221,13 @@ export class BuildScene extends Phaser.Scene {
         .setStrokeStyle(done ? 2 : 1, brdColor);
       this._container.add(cardBg);
 
-      // ── Area icon + name ─────────────────────────────────────────────────────
-      const iconTxt = this.add.text(cx - CARD_W / 2 + 28, cy - 22, area.icon, {
-        fontSize: '22px', fontFamily: 'Arial',
-      }).setOrigin(0.5);
-      this._container.add(iconTxt);
+      // ── Area visual (PNG varsa göster, yoksa emoji fallback) ─────────────────
+      this._drawAreaVisual(
+        area, step,
+        cx - CARD_W / 2 + 4, cardY + 8, // x, y (sol üst köşe)
+        48, CARD_H - 16,                 // w, h
+        !locked
+      );
 
       const nameColor = done ? '#88ffaa' : locked ? '#445566' : '#ccd4ff';
       const nameTxt = this.add.text(cx - CARD_W / 2 + 56, cardY + 12, area.name, {
@@ -325,6 +327,48 @@ export class BuildScene extends Phaser.Scene {
     // Update max scroll
     const totalH   = PAD + AREAS.length * (120 + CARD_GAP) + 8;
     this._maxScroll = Math.max(0, totalH - this._viewH);
+  }
+
+  // ── Alan görseli ─────────────────────────────────────────────────────────────
+
+  /**
+   * Alan için PNG texture varsa göster, yoksa _drawAreaVisualFallback'e düş.
+   * Tüm objeler this._container'a eklenir (scroll içinde kalması için).
+   */
+  _drawAreaVisual(area, step, x, y, w, h, unlocked) {
+    if (!unlocked) {
+      const lockTxt = this.add.text(x + w / 2, y + h / 2, '🔒', {
+        fontSize: '28px', fontFamily: 'Arial',
+      }).setOrigin(0.5).setAlpha(0.4);
+      this._container.add(lockTxt);
+      return;
+    }
+
+    const texKey = `build_${area.id}_${Math.min(step, 3)}`;
+    if (this.textures.exists(texKey)) {
+      const img   = this.add.image(x + w / 2, y + h / 2, texKey);
+      const scale = Math.min(w / img.width, h / img.height) * 0.95;
+      img.setScale(scale).setOrigin(0.5);
+      this._container.add(img);
+    } else {
+      this._drawAreaVisualFallback(area, step, x, y, w, h);
+    }
+  }
+
+  /** Eski emoji-tabanlı ikon — PNG yoksa kullanılır. */
+  _drawAreaVisualFallback(area, step, x, y, w, h) {
+    const iconTxt = this.add.text(x + w / 2, y + h / 2 - 8, area.icon, {
+      fontSize: '22px', fontFamily: 'Arial',
+    }).setOrigin(0.5);
+    this._container.add(iconTxt);
+
+    // Tamamlanan adım sayısını küçük bir badge olarak göster
+    if (step > 0) {
+      const badge = this.add.text(x + w / 2, y + h / 2 + 14, `${step}/4`, {
+        fontSize: '9px', fontFamily: 'Arial', color: '#44cc88',
+      }).setOrigin(0.5);
+      this._container.add(badge);
+    }
   }
 
   _rewardStr(reward) {
