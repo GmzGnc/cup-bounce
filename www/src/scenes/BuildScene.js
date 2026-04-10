@@ -305,9 +305,19 @@ export class BuildScene extends Phaser.Scene {
 
         if (afford) {
           btnBg.setInteractive({ useHandCursor: true });
-          btnBg.on('pointerover',  () => btnBg.setFillStyle(0x163516));
-          btnBg.on('pointerout',   () => btnBg.setFillStyle(bFill));
-          btnBg.on('pointerdown',  () => this._buildStep(area, step, cardY, CARD_H));
+          actTxt.setInteractive({ useHandCursor: true });
+
+          const onBuildPress = () => {
+            if (this._isDragging) return; // kullanıcı scroll yapıyordu, tıklama değil
+            console.log('[Build] Butona tıklandı:', area.id, 'adım:', step + 1,
+                        'coins:', this._getCoins(), 'busy:', this._busy);
+            this._buildStep(area, step, cardY, CARD_H);
+          };
+
+          btnBg.on('pointerover', () => btnBg.setFillStyle(0x163516));
+          btnBg.on('pointerout',  () => btnBg.setFillStyle(bFill));
+          btnBg.on('pointerup',   onBuildPress);
+          actTxt.on('pointerup',  onBuildPress);
         }
       }
     });
@@ -505,23 +515,34 @@ export class BuildScene extends Phaser.Scene {
   // ── Scroll ───────────────────────────────────────────────────────────────────
 
   _enableScroll(topY, viewH) {
-    let dragStart = null;
-    let scrollStart = 0;
+    const DRAG_THRESHOLD = 8; // px — bu kadar hareket yoksa scroll değil, tıklama
+
+    let pointerDownY     = null;
+    let scrollStart      = 0;
+    this._isDragging     = false;
 
     this.input.on('pointerdown', (p) => {
       if (p.y < topY || p.y > topY + viewH) return;
-      dragStart   = p.y;
-      scrollStart = this._scrollY;
+      pointerDownY     = p.y;
+      scrollStart      = this._scrollY;
+      this._isDragging = false;
     });
 
     this.input.on('pointermove', (p) => {
-      if (dragStart === null || !p.isDown) return;
-      const delta = dragStart - p.y;
+      if (pointerDownY === null || !p.isDown) return;
+      const delta = pointerDownY - p.y;
+      if (Math.abs(delta) >= DRAG_THRESHOLD) this._isDragging = true;
+      if (!this._isDragging) return;
       this._scrollY = Phaser.Math.Clamp(scrollStart + delta, -this._maxScroll, 0);
       this._container.setY(topY + this._scrollY);
     });
 
-    this.input.on('pointerup', () => { dragStart = null; });
+    // Obje pointerup olayları sahne pointerup'ından ÖNCE tetiklenir —
+    // dolayısıyla buton handler'ları _isDragging'i doğru okur, sonra burada temizlenir.
+    this.input.on('pointerup', () => {
+      pointerDownY     = null;
+      this._isDragging = false;
+    });
   }
 
   // ── Confetti ─────────────────────────────────────────────────────────────────
