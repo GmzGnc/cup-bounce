@@ -2407,6 +2407,121 @@ export const LEVELS = [
     { x: 143, y: 438, color: 0xcc44ff, points: 6000, isGem: true, small: true, move: { axis: 'x', speed: 156, range: 36 } },
     { x: 195, y: 444, color: 0xcc44ff, points: 6000, isGem: true, small: true, move: { axis: 'y', speed: 148, range: 14, phaseOffset: 0.8 } },
     { x: 247, y: 438, color: 0xcc44ff, points: 6000, isGem: true, small: true, move: { axis: 'x', speed: 152, range: 33, phaseOffset: 1.2 } }
-  ]}
+  ]},
+
+  // ── Bölüm 26 — Hız & Duvar Açığı Seviyeleri (251-260) ──────────────────────
+
+  { id: 251, maxBalls: 5, speedBonusEnabled: true,
+    cups: [
+      { x: 130, y: 200, color: 0x00ee55, points: 1800 },
+      { x: 260, y: 200, color: 0xff3333, points: 1800 },
+      { x: 195, y: 310, color: 0xffcc00, points: 2200 },
+      { x: 195, y: 420, color: 0xcc44ff, points: 5000, isGem: true, small: true }
+    ]},
+
+  { id: 252, maxBalls: 5, speedBonusEnabled: true,
+    cups: [
+      { x: 110, y: 185, color: 0x44aaff, points: 1900 },
+      { x: 195, y: 185, color: 0x00ee55, points: 1900 },
+      { x: 280, y: 185, color: 0xff6600, points: 1900 },
+      { x: 155, y: 310, color: 0xff3333, points: 2100, move: { axis: 'x', speed: 100, range: 30 } },
+      { x: 235, y: 310, color: 0xffcc00, points: 2100, move: { axis: 'x', speed: 100, range: 30, phaseOffset: 1.0 } }
+    ]},
+
+  { id: 253, maxBalls: 6, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 280, gaps: [{ from: 155, to: 235 }] }
+    ],
+    cups: [
+      { x: 100, y: 200, color: 0x00ee55, points: 2000 },
+      { x: 290, y: 200, color: 0xff3333, points: 2000 },
+      { x: 100, y: 370, color: 0x44aaff, points: 2200 },
+      { x: 290, y: 370, color: 0xffcc00, points: 2200 },
+      { x: 195, y: 440, color: 0xcc44ff, points: 5000, isGem: true, small: true }
+    ]},
+
+  { id: 254, maxBalls: 6, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 260, gaps: [{ from: 80, to: 155 }, { from: 235, to: 310 }] }
+    ],
+    cups: [
+      { x: 195, y: 175, color: 0xff6600, points: 2400, move: { axis: 'x', speed: 110, range: 50 } },
+      { x: 110, y: 350, color: 0x00ee55, points: 2000 },
+      { x: 195, y: 350, color: 0xff3333, points: 2000 },
+      { x: 280, y: 350, color: 0xffcc00, points: 2000 }
+    ]},
+
+  { id: 255, maxBalls: 5, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 300, gaps: [{ from: 170, to: 220 }] }
+    ],
+    cups: [
+      { x: 130, y: 190, color: 0x44aaff, points: 2200, small: true },
+      { x: 260, y: 190, color: 0xff88ff, points: 2200, small: true },
+      { x: 195, y: 240, color: 0xcc44ff, points: 5500, isGem: true, small: true },
+      { x: 110, y: 400, color: 0x00ee55, points: 1800, move: { axis: 'x', speed: 120, range: 35 } },
+      { x: 280, y: 400, color: 0xff3333, points: 1800, move: { axis: 'x', speed: 120, range: 35, phaseOffset: 1.1 } }
+    ]},
+
+  { id: 256, maxBalls: 6, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 240, gaps: [{ from: 140, to: 250 }] },
+      { y: 380, gaps: [{ from: 80, to: 155 }] }
+    ],
+    cups: [
+      { x: 90,  y: 175, color: 0xff6600, points: 2000 },
+      { x: 300, y: 175, color: 0x00ee55, points: 2000 },
+      { x: 195, y: 310, color: 0xffcc00, points: 2600, move: { axis: 'y', speed: 115, range: 28 } },
+      { x: 195, y: 450, color: 0xcc44ff, points: 5500, isGem: true, small: true }
+    ]},
+
+  { id: 257, maxBalls: 6, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 270, gaps: [{ from: 120, to: 195 }, { from: 270, to: 340 }] }
+    ],
+    cups: [
+      { x: 80,  y: 185, color: 0x44aaff, points: 2000, small: true },
+      { x: 155, y: 185, color: 0xff3333, points: 2000, small: true },
+      { x: 235, y: 185, color: 0xffcc00, points: 2000, small: true },
+      { x: 310, y: 185, color: 0xff88ff, points: 2000, small: true },
+      { x: 195, y: 360, color: 0x00ee55, points: 2800, move: { axis: 'x', speed: 130, range: 60 } },
+      { x: 195, y: 450, color: 0xcc44ff, points: 6000, isGem: true, small: true }
+    ]},
+
+  { id: 258, maxBalls: 5, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 290, gaps: [{ from: 155, to: 235 }] },
+      { y: 400, gaps: [{ from: 155, to: 235 }] }
+    ],
+    cups: [
+      { x: 120, y: 190, color: 0xff6600, points: 2400, move: { axis: 'y', speed: 125, range: 38 } },
+      { x: 270, y: 190, color: 0x44aaff, points: 2400, move: { axis: 'y', speed: 128, range: 38, phaseOffset: 0.9 } },
+      { x: 195, y: 450, color: 0xcc44ff, points: 6000, isGem: true, small: true }
+    ]},
+
+  { id: 259, maxBalls: 5, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 250, gaps: [{ from: 90, to: 160 }, { from: 230, to: 300 }] }
+    ],
+    cups: [
+      { x: 195, y: 170, color: 0xff3333, points: 2800, small: true, move: { axis: 'x', speed: 140, range: 55 } },
+      { x: 90,  y: 340, color: 0x00ee55, points: 2200, small: true },
+      { x: 195, y: 340, color: 0xffcc00, points: 2200, small: true },
+      { x: 300, y: 340, color: 0xff88ff, points: 2200, small: true },
+      { x: 195, y: 450, color: 0xcc44ff, points: 6500, isGem: true, small: true }
+    ]},
+
+  { id: 260, maxBalls: 5, speedBonusEnabled: true,
+    wallGaps: [
+      { y: 260, gaps: [{ from: 120, to: 195 }] },
+      { y: 370, gaps: [{ from: 195, to: 270 }] }
+    ],
+    cups: [
+      { x: 90,  y: 180, color: 0x44aaff, points: 2500, small: true, move: { axis: 'x', speed: 145, range: 28 } },
+      { x: 300, y: 180, color: 0xff6600, points: 2500, small: true, move: { axis: 'x', speed: 148, range: 28, phaseOffset: 1.2 } },
+      { x: 120, y: 450, color: 0x00ee55, points: 2200, small: true, move: { axis: 'y', speed: 138, range: 32 } },
+      { x: 270, y: 450, color: 0xff3333, points: 2200, small: true, move: { axis: 'y', speed: 142, range: 32, phaseOffset: 0.7 } },
+      { x: 195, y: 316, color: 0xcc44ff, points: 7000, isGem: true, small: true, move: { axis: 'y', speed: 150, range: 20 } }
+    ]}
 
 ];

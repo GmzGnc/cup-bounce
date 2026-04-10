@@ -116,9 +116,8 @@ export class UIScene extends Phaser.Scene {
     });
 
     // İNŞA
-    _makeBtn(162, '\u0130N\u015eA', 0x0f2a10, 0x1d4a1e, 0x33aa44, '#66ff88', () => {
-      this.scene.sleep('GameScene');
-      this.scene.launch('BuildScene');
+    _makeBtn(162, '\uD83C\uDFD7 \u0130n\u015fa', 0x0f2a10, 0x1d4a1e, 0x33aa44, '#66ff88', () => {
+      this.scene.start('BuildScene');
     });
 
     // MAĞAZA

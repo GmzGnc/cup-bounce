@@ -104,6 +104,9 @@ export class GameScene extends Phaser.Scene {
     // ── Level ────────────────────────────────────────────────────────────────
     this._loadLevel();
 
+    // ── Speed timer ring ─────────────────────────────────────────────────────
+    this._initSpeedTimer();
+
     // ── Events ──────────────────────────────────────────────────────────────
     this.events.on('bow-drag-start', this._onBowDragStart, this);
     this.events.on('bow-release',    this._onBowRelease,   this);
@@ -339,6 +342,12 @@ export class GameScene extends Phaser.Scene {
     this.cups.forEach(c => c.destroy());
     this.cups = [];
 
+    // Clean up old wall-gap objects
+    if (this._wallGapObjs) {
+      this._wallGapObjs.forEach(o => o.destroy());
+    }
+    this._wallGapObjs = [];
+
     // Reset per-level stats
     this.levelScore        = 0;
     this.levelGems         = 0;
@@ -362,6 +371,10 @@ export class GameScene extends Phaser.Scene {
         move:   cd.move   ?? null
       }));
     });
+
+    if (data.wallGaps) {
+      this._createWallsWithGaps(data);
+    }
 
     if (this.levelLabel) this.levelLabel.destroy();
     this.levelLabel = this.add.text(this.scale.width / 2, 128,
@@ -417,6 +430,7 @@ export class GameScene extends Phaser.Scene {
     this.state = STATE.FLYING;
     this.bow.setEnabled(false);
     this.ball.launch(vx, vy);
+    this._startSpeedTimer();
   }
 
   // ─── Ball-scored handler ──────────────────────────────────────────────────
@@ -428,7 +442,8 @@ export class GameScene extends Phaser.Scene {
     const multiplier       = this.pendingMultiplier;
     this.pendingMultiplier = 1.0;
     const boosterMult      = this.boosters.isActive('x2Score') ? 2.0 : 1.0;
-    const earned           = Math.round(cup.points * multiplier * boosterMult);
+    const baseEarned       = Math.round(cup.points * multiplier * boosterMult);
+    const earned           = this._applySpeedBonus(baseEarned);
     this.levelBonuses.push(multiplier);
 
     // ── Speed-bonus badge ─────────────────────────────────────────────────────
@@ -496,6 +511,8 @@ export class GameScene extends Phaser.Scene {
   // ─── Ball-lost handler ────────────────────────────────────────────────────
 
   _onBallLost() {
+    this._stopSpeedTimer();
+
     // ── Extra-life booster absorbs one ball loss ──────────────────────────────
     if (this.boosters.isActive('extraLife')) {
       this.boosters.consume('extraLife');
@@ -936,6 +953,203 @@ export class GameScene extends Phaser.Scene {
 
     // Refresh the HUD (ball count, gems, etc.)
     this._syncRegistry();
+  }
+
+  // ─── Speed Timer ─────────────────────────────────────────────────────────
+
+  _initSpeedTimer() {
+    const W = this.scale.width;
+    const x = W - 48;
+    const y = 140;
+    const R = 20;
+
+    this._speedTimerGfx = this.add.graphics().setDepth(25);
+    this._speedTimerTxt = this.add.text(x, y, '', {
+      fontSize: '13px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#ffffff', stroke: '#000000', strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(26);
+
+    this._speedTimerX   = x;
+    this._speedTimerY   = y;
+    this._speedTimerR   = R;
+    this._speedTimerRunning = false;
+    this._speedTimerStart   = 0;
+    this._speedTimerEvent   = null;
+
+    this._speedTimerGfx.setVisible(false);
+    this._speedTimerTxt.setVisible(false);
+  }
+
+  _startSpeedTimer() {
+    const level = parseInt(localStorage.getItem('cupbounce_level') || '1', 10);
+    if (level < 30) return;
+
+    this._speedTimerRunning = true;
+    this._speedTimerStart   = this.time.now;
+
+    this._speedTimerGfx.setVisible(true);
+    this._speedTimerTxt.setVisible(true);
+
+    if (this._speedTimerEvent) this._speedTimerEvent.remove();
+    this._speedTimerEvent = this.time.addEvent({
+      delay: 100, loop: true, callback: this._tickSpeedTimer, callbackScope: this,
+    });
+  }
+
+  _tickSpeedTimer() {
+    if (!this._speedTimerRunning) return;
+
+    const elapsed = (this.time.now - this._speedTimerStart) / 1000;
+    const pct     = Math.max(0, 1 - elapsed / 10);
+
+    const color = pct > 0.5 ? 0x00ee44
+                : pct > 0.25 ? 0xff9900
+                :              0xff2222;
+
+    const g = this._speedTimerGfx;
+    const x = this._speedTimerX;
+    const y = this._speedTimerY;
+    const R = this._speedTimerR;
+
+    g.clear();
+    // Track
+    g.lineStyle(4, 0x222244, 0.7);
+    g.beginPath();
+    g.arc(x, y, R, Phaser.Math.DegToRad(-90), Phaser.Math.DegToRad(270), false);
+    g.strokePath();
+    // Fill
+    if (pct > 0) {
+      g.lineStyle(4, color, 1);
+      g.beginPath();
+      g.arc(x, y, R, Phaser.Math.DegToRad(-90),
+            Phaser.Math.DegToRad(-90 + 360 * pct), false);
+      g.strokePath();
+    }
+
+    const remaining = Math.ceil(Math.max(0, 10 - elapsed));
+    this._speedTimerTxt.setText(String(remaining));
+
+    if (elapsed >= 10) {
+      this._stopSpeedTimer();
+    }
+  }
+
+  _stopSpeedTimer() {
+    this._speedTimerRunning = false;
+    if (this._speedTimerEvent) {
+      this._speedTimerEvent.remove();
+      this._speedTimerEvent = null;
+    }
+    if (this._speedTimerGfx) this._speedTimerGfx.setVisible(false);
+    if (this._speedTimerTxt) this._speedTimerTxt.setVisible(false);
+  }
+
+  _getSpeedBonus(timeUsed) {
+    if (timeUsed <= 2) return { mult: 2.0,  label: '⚡ SÜPER HIZLI! ×2' };
+    if (timeUsed <= 4) return { mult: 1.5,  label: '🔥 Hızlı! ×1.5' };
+    if (timeUsed <= 7) return { mult: 1.25, label: '👍 Güzel! ×1.25' };
+    return { mult: 1.0, label: '' };
+  }
+
+  _applySpeedBonus(baseScore) {
+    if (!this._speedTimerRunning && this._speedTimerStart === 0) return baseScore;
+
+    const timeUsed = this._speedTimerRunning
+      ? (this.time.now - this._speedTimerStart) / 1000
+      : 10;
+
+    this._stopSpeedTimer();
+
+    const { mult, label } = this._getSpeedBonus(timeUsed);
+    if (mult > 1 && label) {
+      this._showSpeedBonusLabel(label, mult);
+    }
+    return Math.round(baseScore * mult);
+  }
+
+  _showSpeedBonusLabel(label, multiplier) {
+    const W = this.scale.width;
+    const lbl = this.add.text(W / 2, 320, label, {
+      fontSize:        '28px',
+      fontFamily:      '"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",Arial',
+      fontStyle:       'bold',
+      color:           multiplier >= 2 ? '#ff4400' : multiplier >= 1.5 ? '#ffaa00' : '#ffdd44',
+      stroke:          '#000000',
+      strokeThickness: 6,
+    }).setOrigin(0.5).setDepth(36).setScale(0.4);
+
+    this.tweens.add({
+      targets: lbl, scaleX: 1, scaleY: 1,
+      duration: 200, ease: 'Back.easeOut',
+      onComplete: () => {
+        this.tweens.add({
+          targets: lbl,
+          y: lbl.y - 80, alpha: 0,
+          duration: 900, delay: 200, ease: 'Power2.easeIn',
+          onComplete: () => lbl.destroy(),
+        });
+      },
+    });
+  }
+
+  // ─── Wall Gaps ────────────────────────────────────────────────────────────
+
+  _createWallsWithGaps(levelData) {
+    const W = this.scale.width;
+    const wallDefs = levelData.wallGaps; // array of {y, gaps:[{from,to}]}
+
+    wallDefs.forEach(wallDef => {
+      const y    = wallDef.y;
+      const gaps = wallDef.gaps || [];
+
+      // Get segments (areas between gaps)
+      const segments = this._splitSegment(0, W, gaps);
+
+      segments.forEach(seg => {
+        // Static physics wall segment
+        const segW = seg.to - seg.from;
+        const segX = seg.from + segW / 2;
+
+        const wall = this.add.rectangle(segX, y, segW, 4, 0x4466cc, 0.85)
+          .setDepth(8);
+        const phys = this.physics.add.staticImage(segX, y, '__DEFAULT')
+          .setDisplaySize(segW, 4)
+          .setVisible(false)
+          .refreshBody();
+
+        this.physics.add.collider(this.ball, phys);
+
+        this._wallGapObjs.push(wall, phys);
+      });
+
+      // ⚠ warning icons at gap edges
+      gaps.forEach(gap => {
+        const midX = (gap.from + gap.to) / 2;
+        const icon = this.add.text(midX, y - 14, '⚠', {
+          fontSize: '13px', fontFamily: 'Arial', color: '#ffaa00',
+        }).setOrigin(0.5).setDepth(9);
+        this._wallGapObjs.push(icon);
+      });
+    });
+  }
+
+  _splitSegment(from, to, gaps) {
+    const segments = [];
+    let cur = from;
+
+    const sorted = [...gaps].sort((a, b) => a.from - b.from);
+    sorted.forEach(gap => {
+      if (gap.from > cur) {
+        segments.push({ from: cur, to: gap.from });
+      }
+      cur = gap.to;
+    });
+
+    if (cur < to) {
+      segments.push({ from: cur, to });
+    }
+
+    return segments;
   }
 
   shutdown() {

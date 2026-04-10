@@ -1,281 +1,479 @@
-import { EconomyManager } from '../managers/EconomyManager.js';
-
-// ─── Alan tanımları ───────────────────────────────────────────────────────────
+// ─── Alan + adım tanımları ────────────────────────────────────────────────────
 const AREAS = [
-  { id: 'cafe',     name: 'Kafe',          cost: 10000,  color: 0xc8792e, abbr: 'KF',
-    desc: 'S\u0131cak bir bulu\u015fma noktas\u0131' },
-  { id: 'garden',   name: 'Bah\u00e7e',    cost: 25000,  color: 0x4caf50, abbr: 'BH',
-    desc: 'Dinlendirici ye\u015fil alan' },
-  { id: 'arcade',   name: 'Oyun Salonu',   cost: 50000,  color: 0x2196f3, abbr: 'OS',
-    desc: 'E\u011flencenin merkezi' },
-  { id: 'stage',    name: 'Sahne',         cost: 90000,  color: 0x9c27b0, abbr: 'SH',
-    desc: 'G\u00f6steri ve performans alan\u0131' },
-  { id: 'workshop', name: 'At\u00f6lye',   cost: 140000, color: 0xff5722, abbr: 'AT',
-    desc: 'Yarat\u0131c\u0131 \u00e7al\u0131\u015fmalar i\u00e7in' },
-  { id: 'funpark',  name: 'E\u011flence Park\u0131', cost: 200000, color: 0xf5c400, abbr: 'EP',
-    desc: 'Dev e\u011flence kompleksi' },
+  {
+    id: 'cafe', name: 'Kafe', icon: '☕', color: 0xc8792e, unlockLevel: 1,
+    desc: 'Sıcak bir buluşma noktası',
+    steps: [
+      { cost: 500,   reward: { balls: 20 } },
+      { cost: 1200,  reward: { balls: 30 } },
+      { cost: 2500,  reward: { gems: 2 } },
+      { cost: 5000,  reward: { balls: 100, gems: 5 } },
+    ],
+  },
+  {
+    id: 'garden', name: 'Bahçe', icon: '🌿', color: 0x4caf50, unlockLevel: 10,
+    desc: 'Dinlendirici yeşil alan',
+    steps: [
+      { cost: 800,   reward: { balls: 20 } },
+      { cost: 2000,  reward: { balls: 30 } },
+      { cost: 4000,  reward: { gems: 3 } },
+      { cost: 8000,  reward: { balls: 100, gems: 8 } },
+    ],
+  },
+  {
+    id: 'arcade', name: 'Oyun Salonu', icon: '🕹️', color: 0x2196f3, unlockLevel: 30,
+    desc: 'Eğlencenin merkezi',
+    steps: [
+      { cost: 1500,  reward: { balls: 20 } },
+      { cost: 3500,  reward: { balls: 30 } },
+      { cost: 7000,  reward: { gems: 4 } },
+      { cost: 14000, reward: { balls: 100, gems: 12 } },
+    ],
+  },
+  {
+    id: 'stage', name: 'Sahne', icon: '🎭', color: 0x9c27b0, unlockLevel: 60,
+    desc: 'Gösteri ve performans alanı',
+    steps: [
+      { cost: 3000,  reward: { balls: 20 } },
+      { cost: 7000,  reward: { balls: 30 } },
+      { cost: 14000, reward: { gems: 6 } },
+      { cost: 28000, reward: { balls: 100, gems: 18 } },
+    ],
+  },
+  {
+    id: 'workshop', name: 'Atölye', icon: '🔧', color: 0xff5722, unlockLevel: 100,
+    desc: 'Yaratıcı çalışmalar için',
+    steps: [
+      { cost: 5000,  reward: { balls: 20 } },
+      { cost: 12000, reward: { balls: 30 } },
+      { cost: 24000, reward: { gems: 8 } },
+      { cost: 48000, reward: { balls: 100, gems: 25 } },
+    ],
+  },
 ];
 
-const CARD_H   = 82;
-const CARD_GAP = 7;
-const CARD_W   = 358;
-const START_Y  = 118;
+const BUILD_V2_KEY = 'cupbounce_build_v2';
 
 // ─── BuildScene ───────────────────────────────────────────────────────────────
 export class BuildScene extends Phaser.Scene {
-  constructor() {
-    super({ key: 'BuildScene' });
-  }
+  constructor() { super({ key: 'BuildScene' }); }
+
+  // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   create() {
-    this.economy = new EconomyManager();
-    this._cards  = [];   // current card game objects
-
     const W = this.scale.width;
     const H = this.scale.height;
+    this._W = W;
+    this._H = H;
     this._cx = W / 2;
+    this._busy = false;
 
-    // ── Dim backdrop ──────────────────────────────────────────────────────────
-    this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.78)
-      .setDepth(200).setInteractive(); // absorb clicks
+    this._state = this._loadState();
 
-    // ── Panel ─────────────────────────────────────────────────────────────────
-    this.add.rectangle(W / 2, H / 2, W - 10, H - 30, 0x07071e, 0.97)
-      .setDepth(201).setStrokeStyle(2, 0x2244aa);
+    // Full-screen backdrop
+    this.add.rectangle(W / 2, H / 2, W, H, 0x03030f).setDepth(200);
 
-    // ── Header ───────────────────────────────────────────────────────────────
-    this.add.text(W / 2, 26, '\u0130N\u015eA MODU', {
-      fontSize: '20px', fontFamily: 'Arial', fontStyle: 'bold',
-      color: '#dde8ff', stroke: '#000033', strokeThickness: 3
-    }).setOrigin(0.5).setDepth(202);
-
-    // Coin balance
-    this._coinLabel = this.add.text(W / 2, 52, '', {
-      fontSize: '15px', fontFamily: 'Arial', color: '#ffdd66'
-    }).setOrigin(0.5).setDepth(202);
-    this._refreshCoinLabel();
-
-    // Separator
-    const sep = this.add.graphics().setDepth(202);
-    sep.lineStyle(1, 0x1e2f66, 0.9)
-      .beginPath().moveTo(20, 68).lineTo(W - 20, 68).strokePath();
-
-    // Close button
-    const closeBtn = this.add.text(W - 22, 22, '\u2715', {
-      fontSize: '20px', fontFamily: 'Arial', fontStyle: 'bold', color: '#778899'
-    }).setOrigin(0.5).setDepth(202).setInteractive({ useHandCursor: true });
-    closeBtn.on('pointerover', () => closeBtn.setStyle({ color: '#ffffff' }));
-    closeBtn.on('pointerout',  () => closeBtn.setStyle({ color: '#778899' }));
-    closeBtn.on('pointerdown', () => this._close());
-
-    // Progress indicator (X / 6 alan)
-    this._progressLabel = this.add.text(20, 52, '', {
-      fontSize: '12px', fontFamily: 'Arial', color: '#445566'
-    }).setOrigin(0, 0.5).setDepth(202);
-    this._refreshProgressLabel();
-
-    // ── Cards ─────────────────────────────────────────────────────────────────
-    this._buildCards();
-
-    // ── Bottom close button ───────────────────────────────────────────────────
-    const bottomY = START_Y + AREAS.length * (CARD_H + CARD_GAP) + 20;
-    const closeBtnBig = this.add.text(W / 2, bottomY, '[ Geri D\u00f6n ]', {
-      fontSize: '18px', fontFamily: 'Arial', fontStyle: 'bold',
-      color: '#7aadff', stroke: '#000033', strokeThickness: 2
-    }).setOrigin(0.5).setDepth(202).setInteractive({ useHandCursor: true });
-    closeBtnBig.on('pointerover', () => closeBtnBig.setStyle({ color: '#aaccff' }));
-    closeBtnBig.on('pointerout',  () => closeBtnBig.setStyle({ color: '#7aadff' }));
-    closeBtnBig.on('pointerdown', () => this._close());
+    this._buildHeader();
+    this._buildScrollArea();
+    this._buildFooter();
   }
 
-  // ── Card management ───────────────────────────────────────────────────────
+  // ── State ────────────────────────────────────────────────────────────────────
 
-  _buildCards() {
-    AREAS.forEach((area, i) => {
-      const cardY = START_Y + i * (CARD_H + CARD_GAP);
-      this._buildCard(area, cardY);
-    });
+  _loadState() {
+    try {
+      return JSON.parse(localStorage.getItem(BUILD_V2_KEY) || '{}');
+    } catch { return {}; }
   }
 
-  _clearCards() {
-    this._cards.forEach(o => o.destroy());
-    this._cards = [];
+  _saveState() {
+    localStorage.setItem(BUILD_V2_KEY, JSON.stringify(this._state));
   }
 
-  _reg(obj) { this._cards.push(obj); return obj; }
+  /** Returns 0-4: how many steps completed for this area. */
+  _getStep(areaId) {
+    return Math.min(this._state[areaId] || 0, 4);
+  }
 
-  _buildCard(area, cardY) {
-    const cx     = this._cx;
-    const isOpen = this.economy.isAreaUnlocked(area.id);
-    const coins  = this.economy.getCoins();
-    const afford = coins >= area.cost;
-    const cy     = cardY + CARD_H / 2;
+  _getCoins() {
+    const em = window.economyManager;
+    if (em) return em.getCoins();
+    return parseInt(localStorage.getItem('cupbounce_coins') || '0', 10);
+  }
 
-    // Card background
-    const bgColor  = isOpen ? 0x081e0c : 0x0b0f28;
-    const brdColor = isOpen ? 0x2d7a2d : (afford ? 0x2244aa : 0x1a1a2e);
-    const brdW     = isOpen ? 2 : 1;
+  _getLevel() {
+    return parseInt(localStorage.getItem('cupbounce_level') || '1', 10);
+  }
 
-    this._reg(
-      this.add.rectangle(cx, cy, CARD_W, CARD_H, bgColor)
-        .setDepth(203).setStrokeStyle(brdW, brdColor)
-    );
+  _spendCoins(amount) {
+    const em = window.economyManager;
+    if (em) return em.spendCoins(amount);
+    const cur = parseInt(localStorage.getItem('cupbounce_coins') || '0', 10);
+    if (cur < amount) return false;
+    localStorage.setItem('cupbounce_coins', cur - amount);
+    return true;
+  }
 
-    // Colour icon box (54×54)
-    const iconX = cx - CARD_W / 2 + 32;
-    this._reg(
-      this.add.rectangle(iconX, cy, 50, 54, area.color, isOpen ? 0.9 : 0.25)
-        .setDepth(204).setStrokeStyle(1, area.color, isOpen ? 1 : 0.4)
-    );
-    this._reg(
-      this.add.text(iconX, cy, area.abbr, {
-        fontSize: '15px', fontFamily: 'Arial', fontStyle: 'bold',
-        color: isOpen ? '#ffffff' : '#556677'
-      }).setOrigin(0.5).setDepth(205)
-    );
-
-    // Name
-    const textX = cx - CARD_W / 2 + 66;
-    this._reg(
-      this.add.text(textX, cardY + 18, area.name, {
-        fontSize: '16px', fontFamily: 'Arial', fontStyle: 'bold',
-        color: isOpen ? '#88ffaa' : '#ccd4f0'
-      }).setOrigin(0, 0).setDepth(204)
-    );
-
-    // Description
-    this._reg(
-      this.add.text(textX, cardY + 38, area.desc, {
-        fontSize: '11px', fontFamily: 'Arial', color: '#44556a'
-      }).setOrigin(0, 0).setDepth(204)
-    );
-
-    // Status / cost text
-    const statusStr   = isOpen
-      ? '\u2713 ACIK'
-      : this._fmtCoin(area.cost);
-    const statusColor = isOpen ? '#44ff88' : (afford ? '#ffcc44' : '#445566');
-
-    this._reg(
-      this.add.text(textX, cardY + 56, statusStr, {
-        fontSize: '13px', fontFamily: 'Arial', fontStyle: isOpen ? 'bold' : 'normal',
-        color: statusColor
-      }).setOrigin(0, 0).setDepth(204)
-    );
-
-    // Action button (right side, only when not open)
-    if (!isOpen) {
-      const btnW  = 86, btnH = 36;
-      const btnX  = cx + CARD_W / 2 - btnW / 2 - 6;
-      const bFill = afford ? 0x133a13 : 0x111122;
-      const bBord = afford ? 0x44cc44 : 0x2a2a40;
-      const bTxt  = afford ? '#44ff88' : '#334455';
-      const label = afford ? 'Sat\u0131n Al' : 'Yetersiz';
-
-      const btnBg = this._reg(
-        this.add.rectangle(btnX, cy, btnW, btnH, bFill)
-          .setDepth(204).setStrokeStyle(1, bBord)
-      );
-      const btnTxt = this._reg(
-        this.add.text(btnX, cy, label, {
-          fontSize: '13px', fontFamily: 'Arial', fontStyle: 'bold', color: bTxt
-        }).setOrigin(0.5).setDepth(205)
-      );
-
-      if (afford) {
-        btnBg .setInteractive({ useHandCursor: true });
-        btnTxt.setInteractive({ useHandCursor: true });
-        const buy = () => this._purchase(area, cardY);
-        btnBg .on('pointerover',  () => btnBg.setFillStyle(0x226622));
-        btnBg .on('pointerout',   () => btnBg.setFillStyle(bFill));
-        btnBg .on('pointerdown',  buy);
-        btnTxt.on('pointerdown',  buy);
+  _giveReward(reward) {
+    const em = window.economyManager;
+    if (reward.balls) {
+      if (em) em.setBalls(em.getBalls() + reward.balls);
+      else {
+        const b = parseInt(localStorage.getItem('cupbounce_balls') || '0', 10);
+        localStorage.setItem('cupbounce_balls', b + reward.balls);
+      }
+    }
+    if (reward.gems) {
+      if (em) em.setGems(em.getGems() + reward.gems);
+      else {
+        const g = parseInt(localStorage.getItem('cupbounce_gems') || '0', 10);
+        localStorage.setItem('cupbounce_gems', g + reward.gems);
       }
     }
   }
 
-  // ── Purchase flow ─────────────────────────────────────────────────────────
+  // ── Header ───────────────────────────────────────────────────────────────────
 
-  _purchase(area, cardY) {
-    if (!this.economy.spendCoins(area.cost)) return;
-    this._syncRegistry();
+  _buildHeader() {
+    const W = this._W;
+    // Panel header bg
+    this.add.rectangle(W / 2, 38, W, 76, 0x07071e).setDepth(201);
+    this.add.graphics().setDepth(201)
+      .lineStyle(1, 0x1e2f66, 0.9)
+      .beginPath().moveTo(0, 76).lineTo(W, 76).strokePath();
+
+    this.add.text(W / 2, 22, '🏗️ İNŞA MODU', {
+      fontSize: '20px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#dde8ff', stroke: '#000033', strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(202);
+
+    this._coinLabel = this.add.text(W / 2, 52, '', {
+      fontSize: '14px', fontFamily: 'Arial', color: '#ffdd66',
+    }).setOrigin(0.5).setDepth(202);
     this._refreshCoinLabel();
 
-    // "İnşa Ediliyor" overlay on the card
-    const cx = this._cx;
-    const cy = cardY + CARD_H / 2;
-
-    const blocker = this.add.rectangle(cx, cy, CARD_W, CARD_H, 0x000000, 0.55)
-      .setDepth(210);
-    const buildTxt = this.add.text(cx, cy, '\uD83C\uDFD7  \u0130n\u015fa Ediliyor...', {
-      fontSize: '17px', fontFamily: 'Arial', fontStyle: 'bold',
-      color: '#ffcc44', stroke: '#000000', strokeThickness: 3
-    }).setOrigin(0.5).setDepth(211);
-
-    this.tweens.add({
-      targets: buildTxt,
-      alpha: 0.25, duration: 350, yoyo: true, repeat: 3,
-      onComplete: () => {
-        blocker.destroy();
-        buildTxt.destroy();
-
-        // Persist + reward
-        this.economy.unlockArea(area.id);
-        this.economy.setBalls(this.economy.getBalls() + 100);
-        this._syncRegistry();
-        this._refreshCoinLabel();
-        this._refreshProgressLabel();
-
-        // Sound
-        const gs = this.scene.get('GameScene');
-        if (gs && gs.sounds) gs.sounds.playBuildUnlock();
-
-        // Rebuild cards
-        this._clearCards();
-        this._buildCards();
-
-        // Confetti
-        this._spawnConfetti();
-
-        // Toast
-        this._toast(`${area.name} a\u00e7\u0131ld\u0131! +100 Top kazan\u0131ld\u0131!`, '#44ff88');
-      }
-    });
-  }
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
-  _fmtCoin(n) {
-    return n.toLocaleString('tr-TR') + ' coin';
-  }
-
-  _syncRegistry() {
-    this.registry.set('coins', this.economy.getCoins());
-    this.registry.set('balls', this.economy.getBalls());
+    // Back button top-left
+    const back = this.add.text(22, 22, '← Geri', {
+      fontSize: '14px', fontFamily: 'Arial', color: '#7aadff',
+    }).setOrigin(0, 0.5).setDepth(202).setInteractive({ useHandCursor: true });
+    back.on('pointerover', () => back.setStyle({ color: '#aaccff' }));
+    back.on('pointerout',  () => back.setStyle({ color: '#7aadff' }));
+    back.on('pointerdown', () => this._goBack());
   }
 
   _refreshCoinLabel() {
-    const coins = this.economy.getCoins();
-    this._coinLabel.setText('\uD83E\uDE99 ' + coins.toLocaleString('tr-TR') + ' coin');
+    this._coinLabel.setText('🪙 ' + this._getCoins().toLocaleString('tr-TR') + ' coin');
   }
 
-  _refreshProgressLabel() {
-    const total    = AREAS.length;
-    const unlocked = AREAS.filter(a => this.economy.isAreaUnlocked(a.id)).length;
-    this._progressLabel.setText(`${unlocked} / ${total} alan`);
+  // ── Scroll area ──────────────────────────────────────────────────────────────
+
+  _buildScrollArea() {
+    const W = this._W;
+    const H = this._H;
+    const TOP = 82;
+    const BOT = 56; // footer height
+    const viewH = H - TOP - BOT;
+
+    // Mask rectangle
+    const maskRect = this.add.rectangle(W / 2, TOP + viewH / 2, W, viewH, 0xffffff)
+      .setVisible(false).setDepth(205);
+    const mask = new Phaser.Display.Masks.GeometryMask(this, maskRect);
+
+    // Scrollable container
+    this._container = this.add.container(0, TOP).setDepth(204).setMask(mask);
+    this._scrollY   = 0;
+    this._maxScroll = 0;
+    this._viewH     = viewH;
+    this._topY      = TOP;
+
+    this._buildCards();
+    this._enableScroll(TOP, viewH);
   }
+
+  _buildCards() {
+    // Destroy previous children
+    this._container.removeAll(true);
+
+    const W  = this._W;
+    const cx = W / 2;
+    const CARD_W   = W - 24;
+    const CARD_H   = 120;
+    const CARD_GAP = 10;
+    const PAD      = 8;
+
+    const currentLevel = this._getLevel();
+
+    AREAS.forEach((area, i) => {
+      const step   = this._getStep(area.id);
+      const done   = step >= 4;
+      const locked = currentLevel < area.unlockLevel && step === 0;
+      const cardY  = PAD + i * (CARD_H + CARD_GAP);
+      const cy     = cardY + CARD_H / 2;
+
+      // ── Card bg ──────────────────────────────────────────────────────────────
+      const bgColor  = done   ? 0x091e09
+                     : locked ? 0x0c0c18
+                     :          0x080e24;
+      const brdColor = done   ? 0x2d7a2d
+                     : locked ? 0x1a1a2e
+                     :          0x2244aa;
+      const cardBg = this.add.rectangle(cx, cy, CARD_W, CARD_H, bgColor)
+        .setStrokeStyle(done ? 2 : 1, brdColor);
+      this._container.add(cardBg);
+
+      // ── Area icon + name ─────────────────────────────────────────────────────
+      const iconTxt = this.add.text(cx - CARD_W / 2 + 28, cy - 22, area.icon, {
+        fontSize: '22px', fontFamily: 'Arial',
+      }).setOrigin(0.5);
+      this._container.add(iconTxt);
+
+      const nameColor = done ? '#88ffaa' : locked ? '#445566' : '#ccd4ff';
+      const nameTxt = this.add.text(cx - CARD_W / 2 + 56, cardY + 12, area.name, {
+        fontSize: '16px', fontFamily: 'Arial', fontStyle: 'bold', color: nameColor,
+      }).setOrigin(0, 0);
+      this._container.add(nameTxt);
+
+      const descTxt = this.add.text(cx - CARD_W / 2 + 56, cardY + 32, area.desc, {
+        fontSize: '11px', fontFamily: 'Arial', color: '#445566',
+      }).setOrigin(0, 0);
+      this._container.add(descTxt);
+
+      // ── Step progress bar ────────────────────────────────────────────────────
+      const barX   = cx - CARD_W / 2 + 12;
+      const barY   = cardY + 58;
+      const barW   = CARD_W - 24;
+      const stepW  = (barW - 3 * 4) / 4; // 4 steps with 4px gaps
+
+      for (let s = 0; s < 4; s++) {
+        const sx  = barX + s * (stepW + 4);
+        const col = s < step ? 0x44cc44 : (s === step && !done ? 0x2244aa : 0x1a1a2e);
+        const seg = this.add.rectangle(sx + stepW / 2, barY, stepW, 10, col)
+          .setStrokeStyle(1, 0x223366);
+        this._container.add(seg);
+      }
+
+      // Step label
+      const stepLabel = done
+        ? '✅ Tamamlandı'
+        : locked
+          ? `🔒 Level ${area.unlockLevel} gerekli`
+          : `Adım ${step + 1}/4`;
+      const stepLabelTxt = this.add.text(cx - CARD_W / 2 + 12, barY + 14, stepLabel, {
+        fontSize: '11px', fontFamily: 'Arial',
+        color: done ? '#44ff88' : locked ? '#445566' : '#7788aa',
+      }).setOrigin(0, 0);
+      this._container.add(stepLabelTxt);
+
+      // ── Action button (right side) ───────────────────────────────────────────
+      if (!done && !locked) {
+        const nextStep = area.steps[step];
+        const coins    = this._getCoins();
+        const afford   = coins >= nextStep.cost;
+
+        const rewardStr = this._rewardStr(nextStep.reward);
+        const costStr   = nextStep.cost.toLocaleString('tr-TR') + ' coin';
+
+        const btnW  = 92;
+        const btnH  = 52;
+        const btnX  = cx + CARD_W / 2 - btnW / 2 - 8;
+        const btnCy = cy;
+
+        const bFill = afford ? 0x0a2a0a : 0x111122;
+        const bBord = afford ? 0x44cc44 : 0x2a2a40;
+
+        const btnBg = this.add.rectangle(btnX, btnCy, btnW, btnH, bFill)
+          .setStrokeStyle(1, bBord);
+        this._container.add(btnBg);
+
+        const costTxt = this.add.text(btnX, btnCy - 10, costStr, {
+          fontSize: '11px', fontFamily: 'Arial', fontStyle: 'bold',
+          color: afford ? '#ffcc44' : '#334455',
+        }).setOrigin(0.5);
+        this._container.add(costTxt);
+
+        const rwdTxt = this.add.text(btnX, btnCy + 7, rewardStr, {
+          fontSize: '11px', fontFamily: 'Arial',
+          color: afford ? '#88ffcc' : '#334455',
+        }).setOrigin(0.5);
+        this._container.add(rwdTxt);
+
+        const actTxt = this.add.text(btnX, btnCy + 22, afford ? 'İnşa Et' : 'Yetersiz', {
+          fontSize: '12px', fontFamily: 'Arial', fontStyle: 'bold',
+          color: afford ? '#44ff88' : '#445566',
+        }).setOrigin(0.5);
+        this._container.add(actTxt);
+
+        if (afford) {
+          btnBg.setInteractive({ useHandCursor: true });
+          btnBg.on('pointerover',  () => btnBg.setFillStyle(0x163516));
+          btnBg.on('pointerout',   () => btnBg.setFillStyle(bFill));
+          btnBg.on('pointerdown',  () => this._buildStep(area, step, cardY, CARD_H));
+        }
+      }
+    });
+
+    // Update max scroll
+    const totalH   = PAD + AREAS.length * (120 + CARD_GAP) + 8;
+    this._maxScroll = Math.max(0, totalH - this._viewH);
+  }
+
+  _rewardStr(reward) {
+    const parts = [];
+    if (reward.balls) parts.push(`+${reward.balls} 🎱`);
+    if (reward.gems)  parts.push(`+${reward.gems} 💎`);
+    return parts.join('  ');
+  }
+
+  // ── Build animation ──────────────────────────────────────────────────────────
+
+  _buildStep(area, stepIdx, cardY, cardH) {
+    if (this._busy) return;
+    const step = area.steps[stepIdx];
+    if (!this._spendCoins(step.cost)) return;
+    this._busy = true;
+    this._refreshCoinLabel();
+
+    const W  = this._W;
+    const cx = W / 2;
+    // Card center in screen coords
+    const cy = this._topY + cardY + cardH / 2 + this._scrollY;
+
+    // Overlay on card
+    const overlay = this.add.rectangle(cx, cy, W - 24, cardH, 0x000000, 0.65).setDepth(210);
+
+    // 🔨 icon that wobbles
+    const hammerTxt = this.add.text(cx - 40, cy, '🔨', {
+      fontSize: '28px', fontFamily: 'Arial',
+    }).setOrigin(0.5).setDepth(211);
+
+    this.tweens.add({
+      targets: hammerTxt, angle: 25, duration: 180, yoyo: true, repeat: -1,
+    });
+
+    // Progress bar bg + fill
+    const barW = 160;
+    const barY = cy + 20;
+    this.add.rectangle(cx, barY, barW, 10, 0x111133, 1).setDepth(211).setStrokeStyle(1, 0x3344aa);
+    const fill = this.add.rectangle(cx - barW / 2, barY, 0, 10, 0x44cc44).setDepth(212).setOrigin(0, 0.5);
+
+    const buildLbl = this.add.text(cx + 50, cy, 'İnşa Ediliyor...', {
+      fontSize: '14px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#ffcc44', stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(211);
+
+    this.tweens.add({
+      targets: fill, scaleX: barW / fill.width, duration: 2200, ease: 'Linear',
+      onUpdate: (tween) => {
+        fill.width = barW * tween.progress;
+      },
+      onComplete: () => {
+        overlay.destroy(); hammerTxt.destroy(); fill.destroy(); buildLbl.destroy();
+
+        // Commit step
+        this._state[area.id] = stepIdx + 1;
+        this._saveState();
+        this._giveReward(step.reward);
+        this._refreshCoinLabel();
+
+        this._busy = false;
+        this._buildCards();
+        this._spawnConfetti();
+        this._showRewardPopup(area, step.reward);
+      },
+    });
+  }
+
+  // ── Reward popup ─────────────────────────────────────────────────────────────
+
+  _showRewardPopup(area, reward) {
+    const W  = this._W;
+    const H  = this._H;
+    const cx = W / 2;
+    const cy = H / 2;
+
+    const bg = this.add.rectangle(cx, cy, 280, 180, 0x07071e, 0.97)
+      .setDepth(220).setStrokeStyle(2, 0x44cc44);
+
+    const titleTxt = this.add.text(cx, cy - 55, `${area.icon} ${area.name}`, {
+      fontSize: '18px', fontFamily: 'Arial', fontStyle: 'bold', color: '#88ffaa',
+    }).setOrigin(0.5).setDepth(221);
+
+    this.add.text(cx, cy - 28, 'İnşa tamamlandı!', {
+      fontSize: '14px', fontFamily: 'Arial', color: '#ccd4ff',
+    }).setOrigin(0.5).setDepth(221);
+
+    const rwdTxt = this.add.text(cx, cy + 2, this._rewardStr(reward), {
+      fontSize: '20px', fontFamily: 'Arial', fontStyle: 'bold', color: '#ffdd44',
+    }).setOrigin(0.5).setDepth(221);
+
+    const btn = this.add.text(cx, cy + 50, '  Harika!  ', {
+      fontSize: '17px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#44ff88', backgroundColor: '#0a2a0a',
+      padding: { x: 14, y: 8 },
+    }).setOrigin(0.5).setDepth(221).setInteractive({ useHandCursor: true });
+
+    const close = () => {
+      [bg, titleTxt, rwdTxt, btn].forEach(o => o.destroy());
+    };
+    btn.on('pointerdown', close);
+    this.time.delayedCall(3500, () => { try { close(); } catch {} });
+  }
+
+  // ── Footer ───────────────────────────────────────────────────────────────────
+
+  _buildFooter() {
+    const W = this._W;
+    const H = this._H;
+
+    this.add.rectangle(W / 2, H - 28, W, 56, 0x07071e).setDepth(201);
+    this.add.graphics().setDepth(201)
+      .lineStyle(1, 0x1e2f66, 0.9)
+      .beginPath().moveTo(0, H - 56).lineTo(W, H - 56).strokePath();
+
+    const backBtn = this.add.text(W / 2, H - 28, '← Oyuna Dön', {
+      fontSize: '17px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#7aadff', stroke: '#000033', strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(202).setInteractive({ useHandCursor: true });
+    backBtn.on('pointerover', () => backBtn.setStyle({ color: '#aaccff' }));
+    backBtn.on('pointerout',  () => backBtn.setStyle({ color: '#7aadff' }));
+    backBtn.on('pointerdown', () => this._goBack());
+  }
+
+  // ── Scroll ───────────────────────────────────────────────────────────────────
+
+  _enableScroll(topY, viewH) {
+    let dragStart = null;
+    let scrollStart = 0;
+
+    this.input.on('pointerdown', (p) => {
+      if (p.y < topY || p.y > topY + viewH) return;
+      dragStart   = p.y;
+      scrollStart = this._scrollY;
+    });
+
+    this.input.on('pointermove', (p) => {
+      if (dragStart === null || !p.isDown) return;
+      const delta = dragStart - p.y;
+      this._scrollY = Phaser.Math.Clamp(scrollStart + delta, -this._maxScroll, 0);
+      this._container.setY(topY + this._scrollY);
+    });
+
+    this.input.on('pointerup', () => { dragStart = null; });
+  }
+
+  // ── Confetti ─────────────────────────────────────────────────────────────────
 
   _spawnConfetti() {
-    const W = this.scale.width;
-    const H = this.scale.height;
+    const W = this._W;
+    const H = this._H;
     const colors = [0xff1744, 0x00e676, 0xffd700, 0x2979ff, 0xcc44ff, 0xff6d00, 0x00bcd4];
 
     for (let i = 0; i < 50; i++) {
-      const col  = colors[Phaser.Math.Between(0, colors.length - 1)];
-      const px   = Phaser.Math.Between(20, W - 20);
-      const sz   = Phaser.Math.Between(5, 12);
-      const tall = Phaser.Math.Between(0, 1);
-      const p    = this.add.rectangle(px, -10, sz, tall ? sz * 1.8 : sz, col).setDepth(220);
+      const col = colors[Phaser.Math.Between(0, colors.length - 1)];
+      const px  = Phaser.Math.Between(20, W - 20);
+      const sz  = Phaser.Math.Between(5, 12);
+      const p   = this.add.rectangle(px, -10, sz, sz * (Phaser.Math.Between(0, 1) ? 1.8 : 1), col)
+        .setDepth(215);
 
       this.tweens.add({
         targets:  p,
@@ -283,30 +481,16 @@ export class BuildScene extends Phaser.Scene {
         x:        px + Phaser.Math.Between(-70, 70),
         angle:    Phaser.Math.Between(-270, 270),
         duration: Phaser.Math.Between(1000, 2500),
-        delay:    Phaser.Math.Between(0, 500),
+        delay:    Phaser.Math.Between(0, 400),
         ease:     'Linear',
-        onComplete: () => p.destroy()
+        onComplete: () => p.destroy(),
       });
     }
   }
 
-  _toast(msg, color = '#ffffff') {
-    const t = this.add.text(this._cx, this.scale.height - 60, msg, {
-      fontSize: '17px', fontFamily: 'Arial', fontStyle: 'bold',
-      color, stroke: '#000000', strokeThickness: 3
-    }).setOrigin(0.5).setDepth(225);
+  // ── Navigation ───────────────────────────────────────────────────────────────
 
-    this.tweens.add({
-      targets: t, y: t.y - 70, alpha: 0,
-      duration: 1800, ease: 'Power2.easeIn',
-      onComplete: () => t.destroy()
-    });
-  }
-
-  // ── Close ─────────────────────────────────────────────────────────────────
-
-  _close() {
-    this.scene.stop('BuildScene');
-    this.scene.wake('GameScene');
+  _goBack() {
+    this.scene.start('GameScene');
   }
 }
