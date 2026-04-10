@@ -206,11 +206,11 @@ export class BuildScene extends Phaser.Scene {
       // Yeşil halka
       reg(this.add.circle(b.x, b.y, R + 6, 0x00ff88, 0).setDepth(4)
         .setStrokeStyle(3, 0x44ffaa, 0.85));
-      try {
-        const img = reg(this.add.image(b.x, b.y, texKey).setDepth(5));
-        const scale = Math.min(130 / img.width, 130 / img.height);
-        img.setScale(scale);
-      } catch {
+      const { bg: dBg, img: dImg } = this._drawBuildingImage(b.x, b.y, texKey, 120, 5);
+      reg(dBg);
+      if (dImg) {
+        reg(dImg);
+      } else {
         reg(this.add.circle(b.x, b.y, R, 0x336633, 0.95).setDepth(5)
           .setStrokeStyle(3, 0x44ff88, 0.9));
         reg(this.add.text(b.x, b.y - 4, b.emoji, {
@@ -246,11 +246,9 @@ export class BuildScene extends Phaser.Scene {
       // Adım görseli (varsa, yarı şeffaf)
       if (step > 0) {
         const texKey = `build_${b.id}_${Math.min(step - 1, 3)}`;
-        try {
-          const img = reg(this.add.image(b.x, b.y, texKey).setDepth(5).setAlpha(0.65));
-          const scale = Math.min(130 / img.width, 130 / img.height);
-          img.setScale(scale);
-        } catch { /* görsel yok */ }
+        const { bg: sBg, img: sImg } = this._drawBuildingImage(b.x, b.y, texKey, 120, 5, 0.65);
+        reg(sBg);
+        if (sImg) reg(sImg);
       }
 
       // Pulse overlay
@@ -445,13 +443,14 @@ export class BuildScene extends Phaser.Scene {
     if (done) {
       // Tamamlandı görünümü
       const texKey = `build_${b.id}_3`;
-      try {
-        reg(fadeIn(this.add.image(cx, topY + 160, texKey)
-          .setDepth(32).setScrollFactor(0).setDisplaySize(150, 140), 40));
-      } catch {
-        reg(fadeIn(this.add.text(cx, topY + 160, b.emoji, {
-          fontSize: '72px', fontFamily: 'Arial',
-        }).setOrigin(0.5).setDepth(32).setScrollFactor(0), 40));
+      {
+        const { bg: pBg, img: pImg } = this._drawBuildingImage(cx, topY + 160, texKey, 140, 32, 1, true);
+        reg(fadeIn(pBg, 40));
+        if (pImg) { reg(fadeIn(pImg, 40)); } else {
+          reg(fadeIn(this.add.text(cx, topY + 160, b.emoji, {
+            fontSize: '72px', fontFamily: 'Arial',
+          }).setOrigin(0.5).setDepth(32).setScrollFactor(0), 40));
+        }
       }
       reg(fadeIn(this.add.text(cx, topY + 250, '✅ Tamamlandı!', {
         fontSize: '18px', fontFamily: 'Arial', fontStyle: 'bold', color: '#44ffaa',
@@ -469,13 +468,14 @@ export class BuildScene extends Phaser.Scene {
       // Bina görseli
       const imgStep = Math.max(step - 1, 0);
       const texKey  = `build_${b.id}_${imgStep}`;
-      try {
-        reg(fadeIn(this.add.image(cx, topY + 140, texKey)
-          .setDepth(32).setScrollFactor(0).setDisplaySize(150, 130), 40));
-      } catch {
-        reg(fadeIn(this.add.text(cx, topY + 140, b.emoji, {
-          fontSize: '60px', fontFamily: 'Arial',
-        }).setOrigin(0.5).setDepth(32).setScrollFactor(0), 40));
+      {
+        const { bg: iBg, img: iImg } = this._drawBuildingImage(cx, topY + 140, texKey, 130, 32, 1, true);
+        reg(fadeIn(iBg, 40));
+        if (iImg) { reg(fadeIn(iImg, 40)); } else {
+          reg(fadeIn(this.add.text(cx, topY + 140, b.emoji, {
+            fontSize: '60px', fontFamily: 'Arial',
+          }).setOrigin(0.5).setDepth(32).setScrollFactor(0), 40));
+        }
       }
 
       // Progress dots
@@ -707,6 +707,35 @@ export class BuildScene extends Phaser.Scene {
         onComplete: () => p.destroy(),
       });
     }
+  }
+
+  // ── Görsel yardımcısı ────────────────────────────────────────────────────────
+
+  /**
+   * Yeşil arka plan kutusu üzerine ölçeklenmiş bina görseli çizer.
+   * Tüm nesneler döndürülen dizi içinde — reg() ile kayıt edilebilir.
+   * @param {number} x
+   * @param {number} y
+   * @param {string} texKey
+   * @param {number} size    — görsel boyutu (px)
+   * @param {number} depth
+   * @param {number} alpha
+   * @param {boolean} scrollFixed — setScrollFactor(0) uygulansın mı
+   * @returns {{ bg, img }} — bg her zaman var, img texture yoksa null
+   */
+  _drawBuildingImage(x, y, texKey, size, depth = 5, alpha = 1, scrollFixed = false) {
+    const bgSize = size + 10;
+    const bg = this.add.rectangle(x, y, bgSize, bgSize, 0x5a8f3c).setDepth(depth - 1);
+    if (scrollFixed) bg.setScrollFactor(0);
+
+    let img = null;
+    if (this.textures.exists(texKey)) {
+      img = this.add.image(x, y, texKey).setDepth(depth).setAlpha(alpha);
+      if (scrollFixed) img.setScrollFactor(0);
+      const scale = size / Math.max(img.width, img.height);
+      img.setScale(scale);
+    }
+    return { bg, img };
   }
 
   // ── Navigasyon ───────────────────────────────────────────────────────────────
