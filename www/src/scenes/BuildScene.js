@@ -373,50 +373,113 @@ export class BuildScene extends Phaser.Scene {
         this._state[area.id] = stepIdx + 1;
         this._saveState();
         this._giveReward(step.reward);
+        const isUnlock = stepIdx === 3;
+        if (isUnlock) this._grantAreaUnlockReward(area);
         this._refreshCoinLabel();
 
         this._busy = false;
         this._buildCards();
         this._spawnConfetti();
-        this._showRewardPopup(area, step.reward);
+        this._showRewardPopup(area, step.reward, isUnlock);
       },
     });
   }
 
+  // ── Alan açılma ödülü ─────────────────────────────────────────────────────────
+
+  _grantAreaUnlockReward(area) {
+    // +100 ekstra top
+    this._giveReward({ balls: 100 });
+
+    // Çift top modunu aktifleştir (100 atış kotası)
+    localStorage.setItem('cupbounce_double_ball_quota',  '100');
+    localStorage.setItem('cupbounce_double_ball_active', 'true');
+
+    // GameScene çalışıyorsa anında bildir
+    const gs = this.scene.get('GameScene');
+    if (gs && gs._checkDoubleBallMode) gs._checkDoubleBallMode();
+  }
+
   // ── Reward popup ─────────────────────────────────────────────────────────────
 
-  _showRewardPopup(area, reward) {
+  _showRewardPopup(area, reward, isUnlock = false) {
     const W  = this._W;
     const H  = this._H;
     const cx = W / 2;
     const cy = H / 2;
 
-    const bg = this.add.rectangle(cx, cy, 280, 180, 0x07071e, 0.97)
-      .setDepth(220).setStrokeStyle(2, 0x44cc44);
+    const popH = isUnlock ? 280 : 200;
+    const objs = [];
+    const reg  = o => { objs.push(o); return o; };
 
-    const titleTxt = this.add.text(cx, cy - 55, `${area.icon} ${area.name}`, {
-      fontSize: '18px', fontFamily: 'Arial', fontStyle: 'bold', color: '#88ffaa',
-    }).setOrigin(0.5).setDepth(221);
+    reg(this.add.rectangle(cx, cy, 310, popH, 0x07071e, 0.97)
+      .setDepth(220).setStrokeStyle(2, isUnlock ? 0xff8c00 : 0x44cc44));
 
-    this.add.text(cx, cy - 28, 'İnşa tamamlandı!', {
-      fontSize: '14px', fontFamily: 'Arial', color: '#ccd4ff',
-    }).setOrigin(0.5).setDepth(221);
+    // Title
+    const titleStr = isUnlock
+      ? `🏗️ ${area.name} TAMAMLANDI!`
+      : `${area.icon} ${area.name}`;
+    reg(this.add.text(cx, cy - popH / 2 + 28, titleStr, {
+      fontSize: '17px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: isUnlock ? '#ffaa44' : '#88ffaa',
+    }).setOrigin(0.5).setDepth(221));
 
-    const rwdTxt = this.add.text(cx, cy + 2, this._rewardStr(reward), {
-      fontSize: '20px', fontFamily: 'Arial', fontStyle: 'bold', color: '#ffdd44',
-    }).setOrigin(0.5).setDepth(221);
+    reg(this.add.text(cx, cy - popH / 2 + 52, isUnlock ? 'Tüm adımlar tamamlandı!' : 'İnşa tamamlandı!', {
+      fontSize: '13px', fontFamily: 'Arial', color: '#aabbdd',
+    }).setOrigin(0.5).setDepth(221));
 
-    const btn = this.add.text(cx, cy + 50, '  Harika!  ', {
+    // Separator
+    const sepG = this.add.graphics().setDepth(221);
+    sepG.lineStyle(1, 0x334466, 0.8)
+      .beginPath().moveTo(cx - 120, cy - popH / 2 + 66).lineTo(cx + 120, cy - popH / 2 + 66).strokePath();
+    objs.push(sepG);
+
+    // Reward icons
+    let rowY = cy - popH / 2 + 92;
+    const iconStyle = { fontSize: '18px', fontFamily: 'Arial' };
+    const valStyle  = { fontSize: '22px', fontFamily: 'Arial', fontStyle: 'bold', color: '#ffee88' };
+    const lblStyle  = { fontSize: '12px', fontFamily: 'Arial', color: '#aabbcc' };
+
+    if (reward.balls) {
+      reg(this.add.text(cx - 60, rowY, '⚾', iconStyle).setOrigin(0.5).setDepth(221));
+      reg(this.add.text(cx - 20, rowY, `+${reward.balls}`, valStyle).setOrigin(0, 0.5).setDepth(221));
+      reg(this.add.text(cx + 50, rowY, 'Top', lblStyle).setOrigin(0, 0.5).setDepth(221));
+      rowY += 34;
+    }
+    if (reward.gems) {
+      reg(this.add.text(cx - 60, rowY, '💎', iconStyle).setOrigin(0.5).setDepth(221));
+      reg(this.add.text(cx - 20, rowY, `+${reward.gems}`, valStyle).setOrigin(0, 0.5).setDepth(221));
+      reg(this.add.text(cx + 50, rowY, 'Gem', lblStyle).setOrigin(0, 0.5).setDepth(221));
+      rowY += 34;
+    }
+
+    if (isUnlock) {
+      // Extra +100 top unlock reward
+      reg(this.add.text(cx - 60, rowY, '⚾', iconStyle).setOrigin(0.5).setDepth(221));
+      reg(this.add.text(cx - 20, rowY, '+100', valStyle).setOrigin(0, 0.5).setDepth(221));
+      reg(this.add.text(cx + 50, rowY, 'Bonus Top', lblStyle).setOrigin(0, 0.5).setDepth(221));
+      rowY += 40;
+
+      // Double ball badge
+      const badgeBg = reg(this.add.rectangle(cx, rowY + 14, 240, 34, 0xff6f00, 1)
+        .setDepth(221).setStrokeStyle(2, 0xffcc44));
+      reg(this.add.text(cx, rowY + 14, '⚾×2  Çift Top Modu Aktif!  (100 atış)', {
+        fontSize: '13px', fontFamily: 'Arial', fontStyle: 'bold', color: '#ffffff',
+      }).setOrigin(0.5).setDepth(222));
+      rowY += 46;
+    }
+
+    const btn = reg(this.add.text(cx, cy + popH / 2 - 22, '  Harika!  ', {
       fontSize: '17px', fontFamily: 'Arial', fontStyle: 'bold',
       color: '#44ff88', backgroundColor: '#0a2a0a',
       padding: { x: 14, y: 8 },
-    }).setOrigin(0.5).setDepth(221).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5).setDepth(222).setInteractive({ useHandCursor: true }));
 
-    const close = () => {
-      [bg, titleTxt, rwdTxt, btn].forEach(o => o.destroy());
-    };
+    const close = () => { objs.forEach(o => { try { o.destroy(); } catch {} }); };
     btn.on('pointerdown', close);
-    this.time.delayedCall(3500, () => { try { close(); } catch {} });
+    btn.on('pointerover', () => btn.setStyle({ backgroundColor: '#163516' }));
+    btn.on('pointerout',  () => btn.setStyle({ backgroundColor: '#0a2a0a' }));
+    this.time.delayedCall(isUnlock ? 6000 : 3500, () => { try { close(); } catch {} });
   }
 
   // ── Footer ───────────────────────────────────────────────────────────────────

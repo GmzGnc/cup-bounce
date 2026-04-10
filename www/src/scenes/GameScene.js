@@ -107,6 +107,10 @@ export class GameScene extends Phaser.Scene {
     // ── Speed timer ring ─────────────────────────────────────────────────────
     this._initSpeedTimer();
 
+    // ── Double ball mode ──────────────────────────────────────────────────────
+    this._createDoubleBallUI();
+    this._initDoubleBallMode();
+
     // ── Events ──────────────────────────────────────────────────────────────
     this.events.on('bow-drag-start', this._onBowDragStart, this);
     this.events.on('bow-release',    this._onBowRelease,   this);
@@ -139,6 +143,27 @@ export class GameScene extends Phaser.Scene {
 
     // ── Ball trail ───────────────────────────────────────────────────────────
     this.ball.update();
+
+    // ── Extra ball (double mode) collision & bounds ───────────────────────────
+    if (this.extraBall) {
+      for (const cup of this.cups) {
+        if (!cup.scored && cup.checkBallEntry(this.extraBall)) {
+          cup.scoreEffect();
+          const pts = Math.round(cup.points * this.pendingMultiplier);
+          this.score      += pts;
+          this.levelScore += pts;
+          this.missions.increment('scores');
+          this.missions.increment('points', pts);
+          this._syncRegistry();
+          this.cameras.main.flash(80, 255, 140, 0, true);
+          this._destroyExtraBall();
+          break;
+        }
+      }
+      if (this.extraBall && this.extraBall.getY() > this.bowY + 70) {
+        this._destroyExtraBall();
+      }
+    }
 
     // ── Cup collision ────────────────────────────────────────────────────────
     for (const cup of this.cups) {
@@ -342,6 +367,8 @@ export class GameScene extends Phaser.Scene {
     this.cups.forEach(c => c.destroy());
     this.cups = [];
 
+    this._destroyExtraBall();
+
     // Clean up old wall-gap objects
     if (this._wallGapObjs) {
       this._wallGapObjs.forEach(o => o.destroy());
@@ -431,6 +458,7 @@ export class GameScene extends Phaser.Scene {
     this.bow.setEnabled(false);
     this.ball.launch(vx, vy);
     this._startSpeedTimer();
+    this._handleDoubleBallShot(vx, vy);
   }
 
   // ─── Ball-scored handler ──────────────────────────────────────────────────
@@ -512,6 +540,7 @@ export class GameScene extends Phaser.Scene {
 
   _onBallLost() {
     this._stopSpeedTimer();
+    this._destroyExtraBall();
 
     // ── Extra-life booster absorbs one ball loss ──────────────────────────────
     if (this.boosters.isActive('extraLife')) {
@@ -953,6 +982,92 @@ export class GameScene extends Phaser.Scene {
 
     // Refresh the HUD (ball count, gems, etc.)
     this._syncRegistry();
+  }
+
+  // ─── Double Ball Mode ─────────────────────────────────────────────────────
+
+  _createDoubleBallUI() {
+    const W = this.scale.width;
+    this.doubleBadge = this.add.text(W - 12, 180, '⚾×2', {
+      fontSize: '13px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#ffffff', backgroundColor: '#ff6f00',
+      padding: { x: 6, y: 3 },
+    }).setOrigin(1, 0).setDepth(10).setVisible(false);
+  }
+
+  _initDoubleBallMode() {
+    this.doubleBallActive = false;
+    this.doubleBallQuota  = 0;
+    this.extraBall        = null;
+    this._checkDoubleBallMode();
+  }
+
+  _checkDoubleBallMode() {
+    const active = localStorage.getItem('cupbounce_double_ball_active') === 'true';
+    const quota  = parseInt(localStorage.getItem('cupbounce_double_ball_quota') || '0', 10);
+    this.doubleBallActive = active && quota > 0;
+    this.doubleBallQuota  = quota;
+
+    if (this.doubleBadge) {
+      this.doubleBadge.setVisible(this.doubleBallActive);
+      if (this.doubleBallActive) {
+        this.doubleBadge.setText(`⚾×2 (${quota})`);
+      }
+    }
+  }
+
+  _handleDoubleBallShot(vx, vy) {
+    if (!this.doubleBallActive || this.doubleBallQuota <= 0) return;
+
+    this._launchExtraBall(vx, vy);
+
+    this.doubleBallQuota--;
+    localStorage.setItem('cupbounce_double_ball_quota', String(this.doubleBallQuota));
+
+    if (this.doubleBallQuota <= 0) {
+      localStorage.removeItem('cupbounce_double_ball_active');
+      localStorage.setItem('cupbounce_double_ball_quota', '0');
+      this.doubleBallActive = false;
+      if (this.doubleBadge) this.doubleBadge.setVisible(false);
+      this._showBoosterToast('Çift top hakkı bitti!', '#ff9900');
+    } else {
+      if (this.doubleBadge) this.doubleBadge.setText(`⚾×2 (${this.doubleBallQuota})`);
+    }
+  }
+
+  _launchExtraBall(vx, vy) {
+    this._destroyExtraBall();
+
+    // Side offset so balls don't perfectly overlap
+    const dx     = vx >= 0 ? -18 : 18;
+    const sprite = this.add.circle(this.bowX + dx, this.ballRestY, 12, 0xff9900, 0.9)
+      .setDepth(10);
+
+    this.physics.add.existing(sprite);
+    const body = sprite.body;
+    body.setCircle(12, 0, 0);
+    body.setCollideWorldBounds(true);
+    body.setBounce(0.55, 0.55);
+    body.setMaxVelocity(1500, 2000);
+    body.setAllowGravity(true);
+    body.setGravityY(620); // matches Ball.js
+    // Slight divergence so it follows a different arc
+    body.setVelocity(vx * 0.93 + dx * 0.6, vy * 0.96);
+
+    this.extraBall = {
+      sprite,
+      getX:         () => sprite.x,
+      getY:         () => sprite.y,
+      getVelocityY: () => body.velocity.y,
+      destroy:      () => { try { sprite.destroy(); } catch {} },
+    };
+  }
+
+  _destroyExtraBall() {
+    if (this.extraBall) {
+      this.extraBall.destroy();
+      this.extraBall = null;
+    }
   }
 
   // ─── Speed Timer ─────────────────────────────────────────────────────────
