@@ -224,26 +224,26 @@ export class BuildScene extends Phaser.Scene {
       // ── Area visual (PNG varsa göster, yoksa emoji fallback) ─────────────────
       this._drawAreaVisual(
         area, step,
-        cx - CARD_W / 2 + 4, cardY + 8, // x, y (sol üst köşe)
-        48, CARD_H - 16,                 // w, h
+        cx - CARD_W / 2 + 4, cardY + 4, // x, y (sol üst köşe)
+        100, CARD_H - 8,                 // w, h — büyütüldü
         !locked
       );
 
       const nameColor = done ? '#88ffaa' : locked ? '#445566' : '#ccd4ff';
-      const nameTxt = this.add.text(cx - CARD_W / 2 + 56, cardY + 12, area.name, {
+      const nameTxt = this.add.text(cx - CARD_W / 2 + 112, cardY + 12, area.name, {
         fontSize: '16px', fontFamily: 'Arial', fontStyle: 'bold', color: nameColor,
       }).setOrigin(0, 0);
       this._container.add(nameTxt);
 
-      const descTxt = this.add.text(cx - CARD_W / 2 + 56, cardY + 32, area.desc, {
+      const descTxt = this.add.text(cx - CARD_W / 2 + 112, cardY + 32, area.desc, {
         fontSize: '11px', fontFamily: 'Arial', color: '#445566',
       }).setOrigin(0, 0);
       this._container.add(descTxt);
 
       // ── Step progress bar ────────────────────────────────────────────────────
-      const barX   = cx - CARD_W / 2 + 12;
+      const barX   = cx - CARD_W / 2 + 112;
       const barY   = cardY + 58;
-      const barW   = CARD_W - 24;
+      const barW   = CARD_W - 120;
       const stepW  = (barW - 3 * 4) / 4; // 4 steps with 4px gaps
 
       for (let s = 0; s < 4; s++) {
@@ -260,7 +260,7 @@ export class BuildScene extends Phaser.Scene {
         : locked
           ? `🔒 Level ${area.unlockLevel} gerekli`
           : `Adım ${step + 1}/4`;
-      const stepLabelTxt = this.add.text(cx - CARD_W / 2 + 12, barY + 14, stepLabel, {
+      const stepLabelTxt = this.add.text(cx - CARD_W / 2 + 112, barY + 14, stepLabel, {
         fontSize: '11px', fontFamily: 'Arial',
         color: done ? '#44ff88' : locked ? '#445566' : '#7788aa',
       }).setOrigin(0, 0);
@@ -336,26 +336,22 @@ export class BuildScene extends Phaser.Scene {
    * Tüm objeler this._container'a eklenir (scroll içinde kalması için).
    */
   _drawAreaVisual(area, step, x, y, w, h, unlocked) {
-    console.log('[Build] _drawAreaVisual çağrıldı:', area.id, 'step:', step, 'unlocked:', unlocked);
     if (!unlocked) {
       const lockTxt = this.add.text(x + w / 2, y + h / 2, '🔒', {
-        fontSize: '28px', fontFamily: 'Arial',
+        fontSize: '32px', fontFamily: 'Arial',
       }).setOrigin(0.5).setAlpha(0.4);
       this._container.add(lockTxt);
       return;
     }
 
-    const texKey    = `build_${area.id}_${Math.min(step, 3)}`;
-    const texManager = this.scene?.manager?.game?.textures || this.textures;
-
-    if (texManager.exists(texKey)) {
-      console.log('[Build] görsel gösteriliyor:', texKey);
-      const img   = this.add.image(x + w / 2, y + h / 2, texKey);
-      const scale = Math.min(w / img.width, h / img.height) * 0.95;
-      img.setScale(scale).setOrigin(0.5);
+    const texKey = `build_${area.id}_${Math.min(step, 3)}`;
+    try {
+      const img    = this.add.image(x + w / 2, y + h / 2, texKey);
+      const scaleX = (w - 8) / img.width;
+      const scaleY = (h - 8) / img.height;
+      img.setScale(Math.min(scaleX, scaleY)).setOrigin(0.5);
       this._container.add(img);
-    } else {
-      console.log('[Build] görsel YOK, fallback:', texKey);
+    } catch (e) {
       this._drawAreaVisualFallback(area, step, x, y, w, h);
     }
   }
