@@ -5,6 +5,11 @@ export class BootScene extends Phaser.Scene {
 
   preload() {
     // ── İnşa görselleri ──────────────────────────────────────────────────────
+    // Eski build texture'larını global cache'den temizle
+    this.textures.each(t => {
+      if (t.key.startsWith('build_')) this.textures.remove(t.key);
+    });
+
     console.log('[Boot] build assets yükleniyor');
     ['kafe', 'bahce', 'salon', 'sahne', 'atolye'].forEach(alan => {
       for (let i = 0; i < 4; i++) {
