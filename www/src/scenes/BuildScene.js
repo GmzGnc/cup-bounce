@@ -344,13 +344,17 @@ export class BuildScene extends Phaser.Scene {
       return;
     }
 
-    const texKey = `build_${area.id}_${Math.min(step, 3)}`;
-    if (this.textures.exists(texKey)) {
+    const texKey    = `build_${area.id}_${Math.min(step, 3)}`;
+    const texManager = this.scene?.manager?.game?.textures || this.textures;
+
+    if (texManager.exists(texKey)) {
+      console.log('[Build] görsel gösteriliyor:', texKey);
       const img   = this.add.image(x + w / 2, y + h / 2, texKey);
       const scale = Math.min(w / img.width, h / img.height) * 0.95;
       img.setScale(scale).setOrigin(0.5);
       this._container.add(img);
     } else {
+      console.log('[Build] görsel YOK, fallback:', texKey);
       this._drawAreaVisualFallback(area, step, x, y, w, h);
     }
   }
