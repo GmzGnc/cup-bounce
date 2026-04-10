@@ -7,6 +7,7 @@ import { MissionScene } from './scenes/MissionScene.js';
 import { BuildScene      } from './scenes/BuildScene.js';
 import { TutorialScene      } from './scenes/TutorialScene.js';
 import { LeaderboardScene    } from './scenes/LeaderboardScene.js';
+import { SeasonScene         } from './scenes/SeasonScene.js';
 import { AppLifecycleManager } from './managers/AppLifecycleManager.js';
 
 const config = {
@@ -50,7 +51,7 @@ const config = {
   },
 
   // Scene order: BootScene starts first, then GameScene + UIScene run together
-  scene: [BootScene, AuthScene, TutorialScene, GameScene, UIScene, ShopScene, MissionScene, BuildScene, LeaderboardScene]
+  scene: [BootScene, AuthScene, TutorialScene, GameScene, UIScene, ShopScene, MissionScene, BuildScene, LeaderboardScene, SeasonScene]
 };
 
 const game = new Phaser.Game(config);

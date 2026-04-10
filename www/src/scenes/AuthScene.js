@@ -1,5 +1,6 @@
 import { TutorialScene }      from './TutorialScene.js';
 import { NotificationManager } from '../managers/NotificationManager.js';
+import { FirebaseManager }     from '../managers/FirebaseManager.js';
 
 const USER_KEY = 'cupbounce_user';
 
@@ -9,6 +10,9 @@ export class AuthScene extends Phaser.Scene {
   }
 
   create() {
+    this.firebase = new FirebaseManager();
+    this._busy    = false;   // buton kilidi (işlem devam ederken çift tıklamayı engelle)
+
     const W = this.scale.width;
     const H = this.scale.height;
 
@@ -94,11 +98,14 @@ export class AuthScene extends Phaser.Scene {
       fontSize: '16px', fontFamily: 'Arial', fontStyle: 'bold', color: '#c5cae9'
     }).setOrigin(0.5);
 
-    gBtn.on('pointerover',  () => gBtn.setFillStyle(0x283593));
-    gBtn.on('pointerout',   () => gBtn.setFillStyle(0x1a237e));
-    gBtn.on('pointerdown',  () => this._mockGoogleLogin());
+    this._gBtn = gBtn;
+    this._gTxt = gTxt;
+
+    gBtn.on('pointerover',  () => { if (!this._busy) gBtn.setFillStyle(0x283593); });
+    gBtn.on('pointerout',   () => { if (!this._busy) gBtn.setFillStyle(0x1a237e); });
+    gBtn.on('pointerdown',  () => this._googleLogin());
     gTxt.setInteractive({ useHandCursor: true });
-    gTxt.on('pointerdown',  () => this._mockGoogleLogin());
+    gTxt.on('pointerdown',  () => this._googleLogin());
 
     // ── Guest button ──────────────────────────────────────────────────────────
     const guBtnY = cardY + 30;
@@ -110,8 +117,11 @@ export class AuthScene extends Phaser.Scene {
       fontSize: '14px', fontFamily: 'Arial', color: '#667799'
     }).setOrigin(0.5);
 
-    guBtn.on('pointerover',  () => { guBtn.setFillStyle(0x12192e); guTxt.setStyle({ color: '#8899bb' }); });
-    guBtn.on('pointerout',   () => { guBtn.setFillStyle(0x0b1020); guTxt.setStyle({ color: '#667799' }); });
+    this._guBtn = guBtn;
+    this._guTxt = guTxt;
+
+    guBtn.on('pointerover',  () => { if (!this._busy) { guBtn.setFillStyle(0x12192e); guTxt.setStyle({ color: '#8899bb' }); } });
+    guBtn.on('pointerout',   () => { if (!this._busy) { guBtn.setFillStyle(0x0b1020); guTxt.setStyle({ color: '#667799' }); } });
     guBtn.on('pointerdown',  () => this._guestLogin());
     guTxt.setInteractive({ useHandCursor: true });
     guTxt.on('pointerdown',  () => this._guestLogin());
@@ -124,28 +134,115 @@ export class AuthScene extends Phaser.Scene {
 
   // ── Auth helpers ──────────────────────────────────────────────────────────
 
+  async _googleLogin() {
+    if (this._busy) return;
+
+    // Tarayıcıda veya Firebase yapılandırılmamışsa mock'a düş
+    if (!this.firebase.isAvailable()) {
+      this._mockGoogleLogin();
+      return;
+    }
+
+    this._setLoading(true, 'Google ile giriş yapılıyor…');
+    try {
+      const user = await this.firebase.signInWithGoogle();
+      this._saveAndProceed(user);
+    } catch (e) {
+      console.warn('[AuthScene] Google sign-in error:', e);
+      const msg = this._friendlyError(e);
+      this._setLoading(false);
+      this._showError(msg);
+    }
+  }
+
+  async _guestLogin() {
+    if (this._busy) return;
+
+    if (!this.firebase.isAvailable()) {
+      this._mockGuestLogin();
+      return;
+    }
+
+    this._setLoading(true, 'Misafir girişi yapılıyor…');
+    try {
+      const user = await this.firebase.signInAnonymously();
+      this._saveAndProceed(user);
+    } catch (e) {
+      console.warn('[AuthScene] Anonymous sign-in error:', e);
+      // Anonim auth başarısız olursa yerel misafir hesabına düş
+      this._setLoading(false);
+      this._mockGuestLogin();
+    }
+  }
+
+  /** Firebase plugin yokken / tarayıcıda Google için yerel mock */
   _mockGoogleLogin() {
     const names = ['Oyuncu', 'CupMaster', 'BounceKing', 'TargetPro', 'AceShooter'];
     const name  = names[Phaser.Math.Between(0, names.length - 1)];
-    const user  = {
+    this._saveAndProceed({
       uid:         'google_' + Math.random().toString(36).slice(2, 9),
       displayName: name,
       email:       name.toLowerCase() + '@gmail.com',
       isGuest:     false,
-      loginTime:   Date.now()
-    };
-    this._saveAndProceed(user);
+      loginTime:   Date.now(),
+    });
   }
 
-  _guestLogin() {
-    const user = {
+  /** Firebase plugin yokken / hata durumunda yerel misafir hesabı */
+  _mockGuestLogin() {
+    this._saveAndProceed({
       uid:         'guest_' + Math.random().toString(36).slice(2, 9),
       displayName: 'Misafir',
       email:       null,
       isGuest:     true,
-      loginTime:   Date.now()
-    };
-    this._saveAndProceed(user);
+      loginTime:   Date.now(),
+    });
+  }
+
+  // ── UI yardımcıları ───────────────────────────────────────────────────────
+
+  /** Butonları kilitler / açar, isteğe bağlı yükleme mesajı gösterir. */
+  _setLoading(loading, msg = '') {
+    this._busy = loading;
+    const alpha = loading ? 0.45 : 1;
+    if (this._gBtn)  this._gBtn.setAlpha(alpha);
+    if (this._gTxt)  this._gTxt.setAlpha(alpha);
+    if (this._guBtn) this._guBtn.setAlpha(alpha);
+    if (this._guTxt) this._guTxt.setAlpha(alpha);
+
+    if (this._loadingTxt) { this._loadingTxt.destroy(); this._loadingTxt = null; }
+    if (loading && msg) {
+      const W = this.scale.width;
+      const H = this.scale.height;
+      this._loadingTxt = this.add.text(W / 2, H / 2 + 155, msg, {
+        fontSize: '13px', fontFamily: 'Arial', color: '#6688bb', align: 'center'
+      }).setOrigin(0.5).setDepth(10);
+    }
+  }
+
+  /** Kısa süreli hata mesajı gösterir (2 s sonra solar). */
+  _showError(msg) {
+    const W = this.scale.width;
+    const H = this.scale.height;
+    if (this._errTxt) { this._errTxt.destroy(); }
+    this._errTxt = this.add.text(W / 2, H / 2 + 155, msg, {
+      fontSize: '13px', fontFamily: 'Arial', color: '#ff5566', align: 'center'
+    }).setOrigin(0.5).setDepth(10);
+    this.tweens.add({
+      targets: this._errTxt, alpha: 0, duration: 600, delay: 2000,
+      onComplete: () => { if (this._errTxt) { this._errTxt.destroy(); this._errTxt = null; } }
+    });
+  }
+
+  _friendlyError(e) {
+    const msg = (e?.message || '').toLowerCase();
+    if (msg.includes('cancelled') || msg.includes('canceled') || msg.includes('12501'))
+      return 'Giriş iptal edildi.';
+    if (msg.includes('network') || msg.includes('unavailable'))
+      return 'Bağlantı hatası. İnternet bağlantını kontrol et.';
+    if (msg.includes('no_user') || msg.includes('google') || msg.includes('10:'))
+      return 'Google yapılandırması eksik.\nLütfen yöneticiyle iletişime geç.';
+    return 'Giriş başarısız. Tekrar dene.';
   }
 
   _saveAndProceed(user) {

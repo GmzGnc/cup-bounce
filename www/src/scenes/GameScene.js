@@ -1,14 +1,16 @@
 import { Bow }             from '../objects/Bow.js';
 import { Ball }            from '../objects/Ball.js';
 import { Cup }             from '../objects/Cup.js';
-import { EconomyManager } from '../managers/EconomyManager.js';
-import { LevelManager }   from '../managers/LevelManager.js';
-import { BoosterManager } from '../managers/BoosterManager.js';
-import { MissionManager } from '../managers/MissionManager.js';
-import { AdManager }          from '../managers/AdManager.js';
-import { SoundManager }       from '../managers/SoundManager.js';
+import { EconomyManager }  from '../managers/EconomyManager.js';
+import { LevelManager }    from '../managers/LevelManager.js';
+import { BoosterManager }  from '../managers/BoosterManager.js';
+import { MissionManager }  from '../managers/MissionManager.js';
+import { AdManager }           from '../managers/AdManager.js';
+import { SoundManager }        from '../managers/SoundManager.js';
 import { LeaderboardManager }  from '../managers/LeaderboardManager.js';
 import { NotificationManager } from '../managers/NotificationManager.js';
+import { CloudSaveManager }    from '../managers/CloudSaveManager.js';
+import { SeasonManager }       from '../managers/SeasonManager.js';
 
 // ─── Game states ──────────────────────────────────────────────────────────────
 const STATE = {
@@ -34,6 +36,8 @@ export class GameScene extends Phaser.Scene {
     const H = this.scale.height;   // 844
 
     this.economy  = new EconomyManager();
+    this.seasons  = new SeasonManager();
+    window.seasonManager = this.seasons; // konsol erişimi: window.seasonManager.getCurrentSeason()
     this.levelMgr = new LevelManager();
     this.boosters = new BoosterManager();
     this.missions = new MissionManager();
@@ -41,8 +45,21 @@ export class GameScene extends Phaser.Scene {
     this.sounds   = new SoundManager(this);
     this.lboard   = new LeaderboardManager();
     this.notifs   = new NotificationManager();
-    // Cancel any pending inactivity notice — player is active now
     this.notifs.cancelInactivity();
+
+    // ── Cloud save ────────────────────────────────────────────────────────────
+    this.cloud = new CloudSaveManager();
+    this._cloudUid = (() => {
+      try { return JSON.parse(localStorage.getItem('cupbounce_user') || 'null')?.uid ?? null; }
+      catch { return null; }
+    })();
+    if (this.cloud.isAvailable() && this._cloudUid) {
+      EconomyManager.registerCloudSave(this.cloud, this._cloudUid);
+      // Buluttan yükle → registry'yi güncelle (async; hafif gecikme kabul edilebilir)
+      this.cloud.load(this._cloudUid).then(data => {
+        if (data) this._syncRegistry();
+      }).catch(() => {});
+    }
 
     // ── Session score (resets on game over; gems/coins persist via EconomyManager) ──
     this.score = 0;
@@ -96,6 +113,8 @@ export class GameScene extends Phaser.Scene {
 
     this.registry.set('timer', -1);
     this._syncRegistry();
+    this._checkDailyLogin();
+    this._checkSeasonPopup();
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -133,11 +152,123 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  // ─── Daily login popup ───────────────────────────────────────────────────
+
+  _checkDailyLogin() {
+    const claimed = this.economy.claimDailyLogin();
+    if (!claimed) return;
+    this.registry.set('balls', this.economy.getBalls());
+    // Small delay so the scene finishes rendering before the popup appears
+    this.time.delayedCall(400, this._showDailyLoginPopup, [], this);
+  }
+
+  _showDailyLoginPopup() {
+    const W  = this.scale.width;
+    const H  = this.scale.height;
+    const CY = Math.round(H * 0.46);
+    const D  = 50;
+
+    const popupObjs = [];   // everything to destroy on close
+    const cardObjs  = [];   // subset that gets the scale-in/-out tween
+
+    let closed = false;
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      overlay.setVisible(false);
+      this.tweens.add({
+        targets:  cardObjs,
+        scaleX:   0.3,
+        scaleY:   0.3,
+        alpha:    0,
+        duration: 180,
+        ease:     'Back.easeIn',
+        onComplete: () => popupObjs.forEach(o => { try { o.destroy(); } catch {} })
+      });
+    };
+
+    // ── Dark overlay (blocks touch to game underneath) ──────────────────────
+    const overlay = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.55)
+      .setDepth(D).setInteractive();
+    popupObjs.push(overlay);
+
+    const reg = o => { popupObjs.push(o); cardObjs.push(o); return o; };
+
+    // ── Card ────────────────────────────────────────────────────────────────
+    reg(this.add.rectangle(W / 2, CY, 272, 192, 0x0a1535)
+      .setDepth(D + 1).setStrokeStyle(2, 0x2255cc));
+    reg(this.add.rectangle(W / 2, CY - 96, 272, 3, 0x44aaff)
+      .setDepth(D + 2).setAlpha(0.7));
+
+    // ── Title ───────────────────────────────────────────────────────────────
+    reg(this.add.text(W / 2, CY - 62, '🎉 Günlük Giriş Ödülü!', {
+      fontSize: '16px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#ffffff', stroke: '#000033', strokeThickness: 2
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    // ── Reward text ─────────────────────────────────────────────────────────
+    reg(this.add.text(W / 2, CY - 18, '+10 Top Kazandın!', {
+      fontSize: '23px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: '#44ff88', stroke: '#003311', strokeThickness: 2
+    }).setOrigin(0.5).setDepth(D + 2));
+
+    // ── "Harika!" button ────────────────────────────────────────────────────
+    const btnBg = reg(this.add.rectangle(W / 2, CY + 54, 124, 36, 0x0f5520)
+      .setDepth(D + 2).setStrokeStyle(2, 0x33cc66).setInteractive({ useHandCursor: true }));
+    const btnTxt = reg(this.add.text(W / 2, CY + 54, 'Harika!', {
+      fontSize: '15px', fontFamily: 'Arial', fontStyle: 'bold', color: '#66ffaa'
+    }).setOrigin(0.5).setDepth(D + 3).setInteractive({ useHandCursor: true }));
+
+    btnBg.on('pointerover',  () => btnBg.setFillStyle(0x187733));
+    btnBg.on('pointerout',   () => btnBg.setFillStyle(0x0f5520));
+    btnBg.on('pointerdown',  close);
+    btnTxt.on('pointerdown', close);
+
+    // ── Scale-in animation ───────────────────────────────────────────────────
+    cardObjs.forEach(o => { o.setScale(0.5); o.setAlpha(0); });
+    this.tweens.add({
+      targets:  cardObjs,
+      scaleX:   1,
+      scaleY:   1,
+      alpha:    1,
+      duration: 320,
+      ease:     'Back.easeOut'
+    });
+
+    // ── Auto-close after 3 s ─────────────────────────────────────────────────
+    this.time.delayedCall(3000, close);
+  }
+
+  // ─── Season popup ────────────────────────────────────────────────────────
+
+  _checkSeasonPopup() {
+    const season = this.seasons.getActiveSeason();
+    if (!season) {
+      console.log('[Season] Aktif sezon yok (Nisan arası dönemi). Yaz: 1 Haz - 31 Ağu');
+      return;
+    }
+    const mgr = this.seasons;
+    if (mgr.hasSeenPopup(season.id)) {
+      console.log('[Season] Popup zaten gösterildi:', season.name);
+      return;
+    }
+    console.log('[Season] Sezon aktif, popup gösteriliyor:', season.name, season.icon);
+    this.time.delayedCall(800, () => {
+      if (this.scene.isActive('SeasonScene')) return;
+      this.scene.launch('SeasonScene');
+    });
+  }
+
   // ─── Background ──────────────────────────────────────────────────────────
 
   _buildBackground(W, H) {
+    const theme     = this.seasons.getTheme();
+    const bgColor   = theme ? theme.bg         : 0x0a0a1a;
+    const starColor = theme ? theme.starColor  : 0xffffff;
+    const gridColor = theme ? theme.gridColor  : 0x0e0e38;
+
     // Solid dark base
-    this.add.rectangle(W / 2, H / 2, W, H, 0x0a0a1a).setDepth(0);
+    this.add.rectangle(W / 2, H / 2, W, H, bgColor).setDepth(0);
 
     // Very subtle vignette corners — dark corners make the play area pop
     const vig = this.add.graphics().setDepth(1);
@@ -151,7 +282,7 @@ export class GameScene extends Phaser.Scene {
       const sy    = Phaser.Math.Between(125, H - 170);
       const r     = Phaser.Math.FloatBetween(0.6, 2.0);
       const baseA = Phaser.Math.FloatBetween(0.25, 0.85);
-      const star  = this.add.circle(sx, sy, r, 0xffffff, baseA).setDepth(1);
+      const star  = this.add.circle(sx, sy, r, starColor, baseA).setDepth(1);
 
       this.tweens.add({
         targets:  star,
@@ -166,7 +297,7 @@ export class GameScene extends Phaser.Scene {
 
     // Subtle horizontal grid lines in play zone
     const grid = this.add.graphics().setDepth(1);
-    grid.lineStyle(1, 0x0e0e38, 1);
+    grid.lineStyle(1, gridColor, 1);
     for (let y = 160; y <= H - 170; y += 90) {
       grid.beginPath();
       grid.moveTo(10, y);
@@ -217,8 +348,15 @@ export class GameScene extends Phaser.Scene {
 
     const data = this.levelMgr.getCurrentLevelData();
 
-    data.cups.forEach(cd => {
-      this.cups.push(new Cup(this, cd.x, cd.y, cd.color, cd.points, {
+    const seasonTheme = this.seasons.getTheme();
+    const seasonCups  = seasonTheme ? seasonTheme.cupColors : null;
+
+    data.cups.forEach((cd, i) => {
+      // Gem cups keep their original appearance; normal cups use seasonal palette if active
+      const color = (!cd.isGem && seasonCups)
+        ? seasonCups[i % seasonCups.length]
+        : cd.color;
+      this.cups.push(new Cup(this, cd.x, cd.y, color, cd.points, {
         isGem:  cd.isGem  ?? false,
         small:  cd.small  ?? false,
         move:   cd.move   ?? null
@@ -802,8 +940,13 @@ export class GameScene extends Phaser.Scene {
 
   shutdown() {
     if (this.sounds) this.sounds.destroy();
-    // Set a 48-h inactivity notification; cancelled on next app open
     if (this.notifs) this.notifs.scheduleInactivity();
+
+    // Bekleyen cloud save'i hemen gönder
+    if (this.cloud && this._cloudUid) {
+      this.cloud.flush(this._cloudUid).catch(() => {});
+    }
+    EconomyManager.unregisterCloudSave();
   }
 
 }

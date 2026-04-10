@@ -1188,7 +1188,7 @@ export const LEVELS = [
     { x: 145, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 84, range: 38 } },
     { x: 245, y: 440, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'x', speed: 80, range: 35, phaseOffset: 1.2 } },
     { x: 195, y: 448, color: 0xcc44ff, points: 1500, isGem: true, small: true, move: { axis: 'y', speed: 72, range: 14, phaseOffset: 0.5 } }
-  ]}
+  ]},
 
   // ════════════════════════════════════════════════════════
   // BÖLÜM 11 (101-110): Nefes Al — Orta Zorluk Yeniden Başlangıç
@@ -1584,7 +1584,7 @@ export const LEVELS = [
     { x: 145, y: 440, color: 0xcc44ff, points: 1700, isGem: true, small: true, move: { axis: 'x', speed: 94, range: 38 } },
     { x: 245, y: 440, color: 0xcc44ff, points: 1700, isGem: true, small: true, move: { axis: 'x', speed: 90, range: 35, phaseOffset: 1.2 } },
     { x: 195, y: 448, color: 0xcc44ff, points: 1700, isGem: true, small: true, move: { axis: 'y', speed: 82, range: 14, phaseOffset: 0.5 } }
-  ]}
+  ]},
 
   // ════════════════════════════════════════════════════════
   // BÖLÜM 16 (151-160): Yeni Mekanik — Yoğun Orta Alan
@@ -1996,8 +1996,7 @@ export const LEVELS = [
     { x: 145, y: 440, color: 0xcc44ff, points: 2700, isGem: true, small: true, move: { axis: 'x', speed: 114, range: 38 } },
     { x: 245, y: 440, color: 0xcc44ff, points: 2700, isGem: true, small: true, move: { axis: 'x', speed: 110, range: 35, phaseOffset: 1.2 } },
     { x: 195, y: 448, color: 0xcc44ff, points: 2700, isGem: true, small: true, move: { axis: 'y', speed: 102, range: 14, phaseOffset: 0.5 } }
-  ]}
-
+  ]},
 
   // ════════════════════════════════════════════════════════
   // BÖLÜM 21 (201-210): Efsane Başlangıcı
@@ -2410,5 +2409,4 @@ export const LEVELS = [
     { x: 247, y: 438, color: 0xcc44ff, points: 6000, isGem: true, small: true, move: { axis: 'x', speed: 152, range: 33, phaseOffset: 1.2 } }
   ]}
 
-];
 ];

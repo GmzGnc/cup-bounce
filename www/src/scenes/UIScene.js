@@ -1,6 +1,7 @@
 import { EconomyManager } from '../managers/EconomyManager.js';
 import { AdManager }      from '../managers/AdManager.js';
 import { TutorialScene }  from './TutorialScene.js';
+import { SeasonManager }  from '../managers/SeasonManager.js';
 
 const TIMER_DURATION = 10; // must match GameScene
 const USER_KEY = 'cupbounce_user';
@@ -62,6 +63,7 @@ export class UIScene extends Phaser.Scene {
       color: '#7eb3ff', stroke: '#000033', strokeThickness: 2
     }).setOrigin(0.5).setDepth(103);
     this._drawLevelBadge();
+    this._buildSeasonBadge(W);
 
     // ── Right: ball count ─────────────────────────────────────────────────────
     this.add.text(W - 82, 9, 'BALLS', {
@@ -75,6 +77,12 @@ export class UIScene extends Phaser.Scene {
     this.ballText = this.add.text(W - 60, 34, '100', {
       fontSize: '20px', fontFamily: 'Arial', fontStyle: 'bold', color: '#ffffff'
     }).setOrigin(0, 0.5).setDepth(102);
+
+    // ── Ball regen countdown ──────────────────────────────────────────────────
+    this.ballCountdown = this.add.text(W - 44, 51, '', {
+      fontSize: '9px', fontFamily: 'Arial', color: '#446688'
+    }).setOrigin(0.5, 0.5).setDepth(102).setVisible(false);
+    this._startCountdownTimer();
 
     // ── Right: gem count ──────────────────────────────────────────────────────
     this._buildGemShape(W - 74, 68, 7);
@@ -159,6 +167,37 @@ export class UIScene extends Phaser.Scene {
     this.registry.events.on('changedata', this._onRegistryChange, this);
     this._renderTimer(-1);
     this._refresh();
+  }
+
+  // ── Season badge (below level badge, centred) ────────────────────────────────
+  _buildSeasonBadge(W) {
+    const mgr    = new SeasonManager();
+    const season = mgr.getActiveSeason();
+    if (!season) return;
+
+    const theme    = season.theme;
+    const accentRgba = Phaser.Display.Color.IntegerToColor(theme.accentColor).rgba;
+    const badgeX   = W / 2;
+    const badgeY   = 82;
+
+    // Tiny pill background
+    const bg = this.add.graphics().setDepth(102);
+    bg.fillStyle(theme.accentColor, 0.18);
+    bg.fillRoundedRect(badgeX - 42, badgeY - 8, 84, 16, 6);
+    bg.lineStyle(1, theme.accentColor, 0.55);
+    bg.strokeRoundedRect(badgeX - 42, badgeY - 8, 84, 16, 6);
+
+    const lbl = this.add.text(badgeX, badgeY, `${season.icon} ${season.name}`, {
+      fontSize: '9px', fontFamily: 'Arial', fontStyle: 'bold',
+      color: accentRgba
+    }).setOrigin(0.5).setDepth(103).setInteractive({ useHandCursor: true });
+
+    // Tap to re-open season popup
+    lbl.on('pointerdown', () => {
+      if (!this.scene.isActive('SeasonScene')) {
+        this.scene.launch('SeasonScene');
+      }
+    });
   }
 
   // ── Level badge ─────────────────────────────────────────────────────────────
@@ -369,8 +408,32 @@ export class UIScene extends Phaser.Scene {
     } catch { /* ignore parse errors */ }
   }
 
+  // ── Ball regen countdown ─────────────────────────────────────────────────────
+  _startCountdownTimer() {
+    this._updateBallCountdown();
+    this._countdownTimer = this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: this._updateBallCountdown,
+      callbackScope: this
+    });
+  }
+
+  _updateBallCountdown() {
+    if (!this.ballCountdown) return;
+    const secs = this.economy.getSecondsToNextBall();
+    if (secs <= 0) {
+      this.ballCountdown.setVisible(false);
+      return;
+    }
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    this.ballCountdown.setText(`${m}:${String(s).padStart(2, '0')}`).setVisible(true);
+  }
+
   shutdown() {
     this.registry.events.off('changedata', this._onRegistryChange, this);
     if (this._timerPulse) this.tweens.killTweensOf(this.timerGfx);
+    if (this._countdownTimer) this._countdownTimer.remove();
   }
 }

@@ -23,6 +23,12 @@ const LEVEL_GEM_REWARDS = {
 
 const SECTION_BALL_REWARD = 10;
 
+// ── Modül-düzey cloud save kaydı ─────────────────────────────────────────────
+// Tek bir CloudSaveManager + uid çifti tüm EconomyManager örnekleri için paylaşılır.
+// GameScene.create() içinde EconomyManager.registerCloudSave(...) ile ayarlanır.
+let _csm = null;   // CloudSaveManager instance
+let _cuid = null;  // Firebase uid
+
 export class EconomyManager {
   constructor() {
     const savedVer = parseInt(localStorage.getItem(VERSION_KEY) || '0', 10);
@@ -97,6 +103,7 @@ export class EconomyManager {
 
   setBalls(count) {
     localStorage.setItem(BALLS_KEY, String(Math.max(0, Math.min(count, MAX_BALLS))));
+    _triggerCloudSave();
   }
 
   spendBall() {
@@ -111,7 +118,7 @@ export class EconomyManager {
   getCoins() {
     return parseInt(localStorage.getItem(COINS_KEY) || String(DEFAULT_COINS), 10);
   }
-  setCoins(n)    { localStorage.setItem(COINS_KEY, String(Math.max(0, n))); }
+  setCoins(n)    { localStorage.setItem(COINS_KEY, String(Math.max(0, n))); _triggerCloudSave(); }
   addCoins(n)    { this.setCoins(this.getCoins() + n); }
   spendCoins(n)  { const c = this.getCoins(); if (c < n) return false; this.setCoins(c - n); return true; }
   hasCoins(n)    { return this.getCoins() >= n; }
@@ -119,7 +126,7 @@ export class EconomyManager {
   getGems() {
     return parseInt(localStorage.getItem(GEMS_KEY) || String(DEFAULT_GEMS), 10);
   }
-  setGems(n)   { localStorage.setItem(GEMS_KEY, String(Math.max(0, n))); }
+  setGems(n)   { localStorage.setItem(GEMS_KEY, String(Math.max(0, n))); _triggerCloudSave(); }
   addGems(n)   { this.setGems(this.getGems() + n); }
   spendGems(n) { const c = this.getGems(); if (c < n) return false; this.setGems(c - n); return true; }
   hasGems(n)   { return this.getGems() >= n; }
@@ -131,7 +138,37 @@ export class EconomyManager {
   isAreaUnlocked(id)  { return this.getUnlockedAreas().includes(id); }
   unlockArea(id) {
     const areas = this.getUnlockedAreas();
-    if (!areas.includes(id)) { areas.push(id); localStorage.setItem(BUILD_KEY, JSON.stringify(areas)); }
+    if (!areas.includes(id)) {
+      areas.push(id);
+      localStorage.setItem(BUILD_KEY, JSON.stringify(areas));
+      _triggerCloudSave();
+    }
   }
   getUnlockedCount() { return this.getUnlockedAreas().length; }
+
+  // ── Cloud save statik API ──────────────────────────────────────────────────
+
+  /**
+   * GameScene.create() içinde çağrılır.
+   * Tüm EconomyManager örnekleri bu kaydı paylaşır.
+   * @param {CloudSaveManager} mgr
+   * @param {string}           uid  Firebase uid
+   */
+  static registerCloudSave(mgr, uid) {
+    _csm  = mgr;
+    _cuid = uid;
+  }
+
+  /** Sahne kapanırken çağrılır — bekleyen kayıtları temizler. */
+  static unregisterCloudSave() {
+    if (_csm) _csm.cancelAutosave();
+    _csm  = null;
+    _cuid = null;
+  }
+}
+
+// Modül-düzey yardımcı — class scope dışında tanımlanır
+// çünkü sınıf metodları tarafından çağrılır (static değil)
+function _triggerCloudSave() {
+  if (_csm && _cuid) _csm.scheduleAutosave(_cuid);
 }
