@@ -200,7 +200,8 @@ export class BuildScene extends Phaser.Scene {
     if (done) {
       // Tamamlandı: gerçek bina görseli
       const texKey = `build_${b.id}_3`;
-      // Şeffaf PNG arka planını gizlemek için zemin rengi daire
+      // Şeffaf PNG arka planını kesin engellemek için dolu dikdörtgen + daire
+      reg(this.add.rectangle(b.x, b.y, 132, 132, 0x5a8f3c).setDepth(4));
       reg(this.add.circle(b.x, b.y, 85, 0x6aaf4c).setDepth(4));
       // Yeşil halka
       reg(this.add.circle(b.x, b.y, R + 6, 0x00ff88, 0).setDepth(4)
