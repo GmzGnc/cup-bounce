@@ -1,7 +1,7 @@
 // ─── Alan + adım tanımları ────────────────────────────────────────────────────
 const AREAS = [
   {
-    id: 'cafe', name: 'Kafe', icon: '☕', color: 0xc8792e, unlockLevel: 1,
+    id: 'kafe', name: 'Kafe', icon: '☕', color: 0xc8792e, unlockLevel: 1,
     desc: 'Sıcak bir buluşma noktası',
     steps: [
       { cost: 500,   reward: { balls: 20 } },
@@ -11,7 +11,7 @@ const AREAS = [
     ],
   },
   {
-    id: 'garden', name: 'Bahçe', icon: '🌿', color: 0x4caf50, unlockLevel: 10,
+    id: 'bahce', name: 'Bahçe', icon: '🌿', color: 0x4caf50, unlockLevel: 10,
     desc: 'Dinlendirici yeşil alan',
     steps: [
       { cost: 800,   reward: { balls: 20 } },
@@ -21,7 +21,7 @@ const AREAS = [
     ],
   },
   {
-    id: 'arcade', name: 'Oyun Salonu', icon: '🕹️', color: 0x2196f3, unlockLevel: 30,
+    id: 'salon', name: 'Oyun Salonu', icon: '🕹️', color: 0x2196f3, unlockLevel: 30,
     desc: 'Eğlencenin merkezi',
     steps: [
       { cost: 1500,  reward: { balls: 20 } },
@@ -31,7 +31,7 @@ const AREAS = [
     ],
   },
   {
-    id: 'stage', name: 'Sahne', icon: '🎭', color: 0x9c27b0, unlockLevel: 60,
+    id: 'sahne', name: 'Sahne', icon: '🎭', color: 0x9c27b0, unlockLevel: 60,
     desc: 'Gösteri ve performans alanı',
     steps: [
       { cost: 3000,  reward: { balls: 20 } },
@@ -41,7 +41,7 @@ const AREAS = [
     ],
   },
   {
-    id: 'workshop', name: 'Atölye', icon: '🔧', color: 0xff5722, unlockLevel: 100,
+    id: 'atolye', name: 'Atölye', icon: '🔧', color: 0xff5722, unlockLevel: 100,
     desc: 'Yaratıcı çalışmalar için',
     steps: [
       { cost: 5000,  reward: { balls: 20 } },
@@ -336,6 +336,7 @@ export class BuildScene extends Phaser.Scene {
    * Tüm objeler this._container'a eklenir (scroll içinde kalması için).
    */
   _drawAreaVisual(area, step, x, y, w, h, unlocked) {
+    console.log('[Build] _drawAreaVisual çağrıldı:', area.id, 'step:', step, 'unlocked:', unlocked);
     if (!unlocked) {
       const lockTxt = this.add.text(x + w / 2, y + h / 2, '🔒', {
         fontSize: '28px', fontFamily: 'Arial',
