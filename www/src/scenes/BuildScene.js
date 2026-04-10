@@ -150,33 +150,21 @@ export class BuildScene extends Phaser.Scene {
     // Yeşil zemin
     this.add.rectangle(WORLD_W / 2, WORLD_H / 2, WORLD_W, WORLD_H, 0x5a8f3c).setDepth(0);
 
-    // Taş yollar (binalar arası)
-    const roads = this.add.graphics().setDepth(1);
-    roads.fillStyle(0x888888, 0.65);
-
-    // Kafe → Bahçe (dikey + yatay)
-    roads.fillRect(148, 280, 16, 260);   // sol dikey
-    roads.fillRect(148, 520, 232, 16);   // üst yatay bağlantı
-    // Kafe → Salon
-    roads.fillRect(626, 280, 16, 260);   // sağ dikey
-    roads.fillRect(390, 280, 252, 16);   // üst yatay bağlantı
-    // Bahçe → Sahne
-    roads.fillRect(208, 520, 16, 296);   // sol alt dikey
-    // Salon → Atölye
-    roads.fillRect(566, 520, 16, 296);   // sağ alt dikey
-    // Alt yol (sahne ↔ atölye)
-    roads.fillRect(208, 800, 368, 16);
-
-    // Yol kenar çizgisi
-    const roadLine = this.add.graphics().setDepth(2);
-    roadLine.lineStyle(1, 0xaaaaaa, 0.3);
-    roadLine.strokeRect(148, 280, 16, 260);
-    roadLine.strokeRect(148, 520, 232, 16);
-    roadLine.strokeRect(626, 280, 16, 260);
-    roadLine.strokeRect(390, 280, 252, 16);
-    roadLine.strokeRect(208, 520, 16, 296);
-    roadLine.strokeRect(566, 520, 16, 296);
-    roadLine.strokeRect(208, 800, 368, 16);
+    // Taş yollar — binalar arası döndürülmüş dikdörtgenler
+    const roadDefs = [
+      [390, 280, 160, 520],
+      [390, 280, 620, 520],
+      [160, 520, 220, 800],
+      [620, 520, 560, 800],
+    ];
+    roadDefs.forEach(([x1, y1, x2, y2]) => {
+      const rcx   = (x1 + x2) / 2;
+      const rcy   = (y1 + y2) / 2;
+      const len   = Math.hypot(x2 - x1, y2 - y1);
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      this.add.rectangle(rcx, rcy, len, 18, 0x8B7355).setRotation(angle).setDepth(1);
+      this.add.rectangle(rcx, rcy, len - 4, 8, 0xA0896B).setRotation(angle).setDepth(2);
+    });
 
     // Dekorasyonlar
     for (const d of DECO) {
@@ -205,26 +193,29 @@ export class BuildScene extends Phaser.Scene {
     const step   = this._getStep(b.id);
     const done   = step >= 4;
     const locked = currentLevel < b.unlockLevel && step === 0;
-    const R      = 58; // yarıçap
+    const R      = 80; // yarıçap
     const objs   = [];
     const reg    = o => { objs.push(o); this._buildingObjs.push(o); return o; };
 
     if (done) {
       // Tamamlandı: gerçek bina görseli
       const texKey = `build_${b.id}_3`;
+      // Şeffaf PNG arka planını gizlemek için zemin rengi daire
+      reg(this.add.circle(b.x, b.y, R, 0x5a8f3c).setDepth(4));
+      // Yeşil halka
+      reg(this.add.circle(b.x, b.y, R + 6, 0x00ff88, 0).setDepth(4)
+        .setStrokeStyle(3, 0x44ffaa, 0.85));
       try {
-        reg(this.add.image(b.x, b.y, texKey)
-          .setDepth(5).setDisplaySize(120, 120));
+        const img = reg(this.add.image(b.x, b.y, texKey).setDepth(5));
+        const scale = Math.min(130 / img.width, 130 / img.height);
+        img.setScale(scale);
       } catch {
         reg(this.add.circle(b.x, b.y, R, 0x336633, 0.95).setDepth(5)
           .setStrokeStyle(3, 0x44ff88, 0.9));
         reg(this.add.text(b.x, b.y - 4, b.emoji, {
-          fontSize: '38px', fontFamily: 'Arial',
+          fontSize: '48px', fontFamily: 'Arial',
         }).setOrigin(0.5).setDepth(6));
       }
-      // Yeşil halka
-      reg(this.add.circle(b.x, b.y, R + 6, 0x00ff88, 0).setDepth(4)
-        .setStrokeStyle(3, 0x44ffaa, 0.85));
       // ✅ rozet
       reg(this.add.text(b.x + R - 2, b.y - R + 2, '✅', {
         fontSize: '18px', fontFamily: 'Arial',
@@ -247,16 +238,18 @@ export class BuildScene extends Phaser.Scene {
 
     } else {
       // İnşaat bekliyor
+      // Zemin dairesi (her zaman çiz — şeffaflık gözükmesin)
+      reg(this.add.circle(b.x, b.y, R, 0x5a8f3c).setDepth(4));
+      reg(this.add.circle(b.x, b.y, R, 0x2a3a2a, 0.5).setDepth(5)
+        .setStrokeStyle(2, 0x3355aa, 0.7));
       // Adım görseli (varsa, yarı şeffaf)
       if (step > 0) {
         const texKey = `build_${b.id}_${Math.min(step - 1, 3)}`;
         try {
-          reg(this.add.image(b.x, b.y, texKey)
-            .setDepth(5).setDisplaySize(120, 120).setAlpha(0.6));
+          const img = reg(this.add.image(b.x, b.y, texKey).setDepth(5).setAlpha(0.65));
+          const scale = Math.min(130 / img.width, 130 / img.height);
+          img.setScale(scale);
         } catch { /* görsel yok */ }
-      } else {
-        reg(this.add.circle(b.x, b.y, R, 0x2a3a2a, 0.8).setDepth(5)
-          .setStrokeStyle(2, 0x3355aa, 0.7));
       }
 
       // Pulse overlay
@@ -268,7 +261,7 @@ export class BuildScene extends Phaser.Scene {
 
       // 🏗️ ikon
       const crane = reg(this.add.text(b.x, b.y - 4, '🏗️', {
-        fontSize: '32px', fontFamily: 'Arial',
+        fontSize: '40px', fontFamily: 'Arial',
       }).setOrigin(0.5).setDepth(7));
       this.tweens.add({
         targets: crane, y: b.y - 9,
