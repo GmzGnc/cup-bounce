@@ -206,10 +206,9 @@ export class BuildScene extends Phaser.Scene {
       // Yeşil halka
       reg(this.add.circle(b.x, b.y, R + 6, 0x00ff88, 0).setDepth(4)
         .setStrokeStyle(3, 0x44ffaa, 0.85));
-      const { bg: dBg, img: dImg } = this._drawBuildingImage(b.x, b.y, texKey, 120, 5);
-      reg(dBg);
-      if (dImg) {
-        reg(dImg);
+      const dRt = this._drawBuildingImage(b.x, b.y, texKey, 120, 5);
+      if (dRt) {
+        reg(dRt);
       } else {
         reg(this.add.circle(b.x, b.y, R, 0x336633, 0.95).setDepth(5)
           .setStrokeStyle(3, 0x44ff88, 0.9));
@@ -246,9 +245,8 @@ export class BuildScene extends Phaser.Scene {
       // Adım görseli (varsa, yarı şeffaf)
       if (step > 0) {
         const texKey = `build_${b.id}_${Math.min(step - 1, 3)}`;
-        const { bg: sBg, img: sImg } = this._drawBuildingImage(b.x, b.y, texKey, 120, 5, 0.65);
-        reg(sBg);
-        if (sImg) reg(sImg);
+        const sRt = this._drawBuildingImage(b.x, b.y, texKey, 120, 5, 0.65);
+        if (sRt) reg(sRt);
       }
 
       // Pulse overlay
@@ -444,9 +442,8 @@ export class BuildScene extends Phaser.Scene {
       // Tamamlandı görünümü
       const texKey = `build_${b.id}_3`;
       {
-        const { bg: pBg, img: pImg } = this._drawBuildingImage(cx, topY + 160, texKey, 140, 32, 1, true);
-        reg(fadeIn(pBg, 40));
-        if (pImg) { reg(fadeIn(pImg, 40)); } else {
+        const pRt = this._drawBuildingImage(cx, topY + 160, texKey, 140, 32, 1, true);
+        if (pRt) { reg(fadeIn(pRt, 40)); } else {
           reg(fadeIn(this.add.text(cx, topY + 160, b.emoji, {
             fontSize: '72px', fontFamily: 'Arial',
           }).setOrigin(0.5).setDepth(32).setScrollFactor(0), 40));
@@ -469,9 +466,8 @@ export class BuildScene extends Phaser.Scene {
       const imgStep = Math.max(step - 1, 0);
       const texKey  = `build_${b.id}_${imgStep}`;
       {
-        const { bg: iBg, img: iImg } = this._drawBuildingImage(cx, topY + 140, texKey, 130, 32, 1, true);
-        reg(fadeIn(iBg, 40));
-        if (iImg) { reg(fadeIn(iImg, 40)); } else {
+        const iRt = this._drawBuildingImage(cx, topY + 140, texKey, 130, 32, 1, true);
+        if (iRt) { reg(fadeIn(iRt, 40)); } else {
           reg(fadeIn(this.add.text(cx, topY + 140, b.emoji, {
             fontSize: '60px', fontFamily: 'Arial',
           }).setOrigin(0.5).setDepth(32).setScrollFactor(0), 40));
@@ -711,31 +707,27 @@ export class BuildScene extends Phaser.Scene {
 
   // ── Görsel yardımcısı ────────────────────────────────────────────────────────
 
-  /**
-   * Yeşil arka plan kutusu üzerine ölçeklenmiş bina görseli çizer.
-   * Tüm nesneler döndürülen dizi içinde — reg() ile kayıt edilebilir.
-   * @param {number} x
-   * @param {number} y
-   * @param {string} texKey
-   * @param {number} size    — görsel boyutu (px)
-   * @param {number} depth
-   * @param {number} alpha
-   * @param {boolean} scrollFixed — setScrollFactor(0) uygulansın mı
-   * @returns {{ bg, img }} — bg her zaman var, img texture yoksa null
-   */
-  _drawBuildingImage(x, y, texKey, size, depth = 5, alpha = 1, scrollFixed = false) {
-    const bgSize = size + 10;
-    const bg = this.add.rectangle(x, y, bgSize, bgSize, 0x5a8f3c).setDepth(depth - 1);
-    if (scrollFixed) bg.setScrollFactor(0);
+  _drawBuildingImage(x, y, texKey, size, depth = 1, alpha = 1, scrollFixed = false) {
+    if (!this.textures.exists(texKey)) return null;
 
-    let img = null;
-    if (this.textures.exists(texKey)) {
-      img = this.add.image(x, y, texKey).setDepth(depth).setAlpha(alpha);
-      if (scrollFixed) img.setScrollFactor(0);
-      const scale = size / Math.max(img.width, img.height);
-      img.setScale(scale);
-    }
-    return { bg, img };
+    // RenderTexture: yeşil arka plan + görsel birleşik — alpha kanalı sıfırlanır
+    const rt = this.add.renderTexture(x, y, size, size);
+    rt.setOrigin(0.5);
+
+    // Yeşil arka plan doldur
+    rt.fill(0x5a8f3c, 1);
+
+    // Görseli üstüne çiz
+    const tempImg = this.make.image({ x: 0, y: 0, key: texKey, add: false });
+    const scale = size / Math.max(tempImg.width, tempImg.height);
+    tempImg.setScale(scale);
+    rt.draw(tempImg, size / 2, size / 2);
+    tempImg.destroy();
+
+    rt.setDepth(depth).setAlpha(alpha);
+    if (scrollFixed) rt.setScrollFactor(0);
+
+    return rt;
   }
 
   // ── Navigasyon ───────────────────────────────────────────────────────────────
