@@ -201,6 +201,7 @@ export class UIScene extends Phaser.Scene {
 
   // ── Level badge ─────────────────────────────────────────────────────────────
   _drawLevelBadge() {
+    if (!this.levelBadgeGfx) return;
     const g  = this.levelBadgeGfx;
     const cx = this.scale.width / 2;
     g.clear();
@@ -232,6 +233,8 @@ export class UIScene extends Phaser.Scene {
   }
 
   _renderTimer(t) {
+    if (!this.timerGfx || !this.timerLabel) return;
+
     const g     = this.timerGfx;
     const W     = this.scale.width;
     const BAR_Y = 110;
@@ -311,7 +314,7 @@ export class UIScene extends Phaser.Scene {
       if (balls <= 10)      col = 0xff4444;
       else if (balls <= 30) col = 0xffaa22;
       this.ballText.setStyle({ color: Phaser.Display.Color.IntegerToColor(col).rgba });
-      this.ballIcon.setFillStyle(col);
+      if (this.ballIcon) this.ballIcon.setFillStyle(col);
     }
   }
 
@@ -432,7 +435,19 @@ export class UIScene extends Phaser.Scene {
 
   shutdown() {
     this.registry.events.off('changedata', this._onRegistryChange, this);
-    if (this._timerPulse) this.tweens.killTweensOf(this.timerGfx);
-    if (this._countdownTimer) this._countdownTimer.remove();
+    if (this._timerPulse && this.timerGfx) this.tweens.killTweensOf(this.timerGfx);
+    if (this._countdownTimer) { this._countdownTimer.remove(); this._countdownTimer = null; }
+
+    // Null out all text/graphics refs so any stale event callbacks are harmless
+    this.scoreText      = null;
+    this.coinText       = null;
+    this.levelText      = null;
+    this.ballText       = null;
+    this.ballIcon       = null;
+    this.gemText        = null;
+    this.ballCountdown  = null;
+    this.timerGfx       = null;
+    this.timerLabel     = null;
+    this.levelBadgeGfx  = null;
   }
 }
